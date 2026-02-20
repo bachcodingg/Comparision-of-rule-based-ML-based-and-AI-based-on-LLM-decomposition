@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<ruleset name="LargeClassDetection"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 
+                             https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+    
+    <description>
+        Rules for detecting large Java classes that may need decomposition.
+        This ruleset focuses on identifying "God Class" and "Large Class" code smells
+        that indicate a class has too many responsibilities and should be split.
+    </description>
+    
+    <!-- ============================================================ -->
+    <!-- GOD CLASS DETECTION -->
+    <!-- Detects classes with too many responsibilities -->
+    <!-- ============================================================ -->
+    <rule ref="category/java/design.xml/GodClass">
+        <properties>
+            <!-- 
+                GodClass uses multiple metrics:
+                - WMC (Weighted Methods per Class) > 47
+                - ATFD (Access to Foreign Data) > 5
+                - TCC (Tight Class Cohesion) < 0.33
+            -->
+        </properties>
+    </rule>
+    
+    <!-- ============================================================ -->
+    <!-- SIZE METRICS -->
+    <!-- ============================================================ -->
+    
+    <!-- Excessive Class Length: Classes with too many lines -->
+    <rule ref="category/java/design.xml/ExcessiveClassLength">
+        <properties>
+            <property name="minimum" value="500"/>
+        </properties>
+    </rule>
+    
+    <!-- Excessive Method Length: Methods with too many lines -->
+    <rule ref="category/java/design.xml/ExcessiveMethodLength">
+        <properties>
+            <property name="minimum" value="100"/>
+        </properties>
+    </rule>
+    
+    <!-- Too Many Methods: Classes with too many methods -->
+    <rule ref="category/java/design.xml/TooManyMethods">
+        <properties>
+            <property name="maxmethods" value="20"/>
+        </properties>
+    </rule>
+    
+    <!-- Too Many Fields: Classes with too many fields -->
+    <rule ref="category/java/design.xml/TooManyFields">
+        <properties>
+            <property name="maxfields" value="15"/>
+        </properties>
+    </rule>
+    
+    <!-- Excessive Public Count: Too many public members -->
+    <rule ref="category/java/design.xml/ExcessivePublicCount">
+        <properties>
+            <property name="minimum" value="25"/>
+        </properties>
+    </rule>
+    
+    <!-- ============================================================ -->
+    <!-- COMPLEXITY METRICS -->
+    <!-- ============================================================ -->
+    
+    <!-- Cyclomatic Complexity: High complexity methods/classes -->
+    <rule ref="category/java/design.xml/CyclomaticComplexity">
+        <properties>
+            <property name="classReportLevel" value="50"/>
+            <property name="methodReportLevel" value="15"/>
+        </properties>
+    </rule>
+    
+    <!-- NPath Complexity: High path complexity -->
+    <rule ref="category/java/design.xml/NPathComplexity">
+        <properties>
+            <property name="reportLevel" value="200"/>
+        </properties>
+    </rule>
+    
+    <!-- ============================================================ -->
+    <!-- COUPLING METRICS -->
+    <!-- ============================================================ -->
+    
+    <!-- Coupling Between Objects: High coupling -->
+    <rule ref="category/java/design.xml/CouplingBetweenObjects">
+        <properties>
+            <property name="threshold" value="15"/>
+        </properties>
+    </rule>
+    
+    <!-- Excessive Imports: Too many dependencies -->
+    <rule ref="category/java/design.xml/ExcessiveImports">
+        <properties>
+            <property name="minimum" value="30"/>
+        </properties>
+    </rule>
+    
+    <!-- ============================================================ -->
+    <!-- DATA CLASS DETECTION -->
+    <!-- Classes that only hold data with no behavior -->
+    <!-- ============================================================ -->
+    <rule ref="category/java/design.xml/DataClass"/>
+    
+</ruleset>

@@ -1,0 +1,51 @@
+# ML-Based Java Class Decomposition Configuration
+# Based on Rao et al. (2023), Dewangan et al. (2023)
+
+data:
+  sample_dir: "data/sample"
+  processed_dir: "data/processed"
+
+preprocessing:
+  balancing:
+    enabled: true
+    method: "smote"
+    k_neighbors: 5
+    random_state: 42
+  feature_selection:
+    enabled: true
+    method: "pca"
+    n_components: 10
+
+models:
+  primary: "ensemble"
+  random_forest:
+    n_estimators: 100
+    max_depth: 15
+    random_state: 42
+  xgboost:
+    n_estimators: 100
+    max_depth: 6
+    learning_rate: 0.1
+  ensemble:
+    members: ["random_forest", "xgboost", "gradient_boosting"]
+    voting: "soft"
+
+training:
+  test_size: 0.2
+  cross_validation:
+    n_folds: 10
+
+severity:
+  thresholds:
+    loc: {none: 200, minor: 500, major: 1000}
+    nom: {none: 10, minor: 20, major: 40}
+    wmc: {none: 30, minor: 60, major: 100}
+    lcom: {none: 0.3, minor: 0.5, major: 0.7}
+
+output:
+  results_dir: "results"
+  models_dir: "results/models"
+
+logging:
+  level: "INFO"
+  file: "logs/ml_analysis.log"

@@ -1,0 +1,92 @@
+[
+  {
+    "class_name": "ClothingInventoryManager",
+    "file_path": "data/sample/ClothingInventoryManager.java",
+    "predicted_severity": "MAJOR",
+    "severity_score": 2,
+    "confidence": 82.56,
+    "probabilities": {
+      "NONE": 2.16,
+      "MINOR": 7.77,
+      "MAJOR": 82.56,
+      "CRITICAL": 7.52
+    },
+    "is_god_class": true,
+    "recommendation": "Schedule refactoring. This class shows signs of becoming a God Class."
+  },
+  {
+    "class_name": "EmailValidator",
+    "file_path": "data/sample/Example_1_LOW_EmailValidator.java",
+    "predicted_severity": "NONE",
+    "severity_score": 0,
+    "confidence": 92.12,
+    "probabilities": {
+      "NONE": 92.12,
+      "MINOR": 7.51,
+      "MAJOR": 0.35,
+      "CRITICAL": 0.01
+    },
+    "is_god_class": false,
+    "recommendation": "No action required. Class is well-designed."
+  },
+  {
+    "class_name": "OrderProcessor",
+    "file_path": "data/sample/Example_2_MEDIUM_OrderProcessor.java",
+    "predicted_severity": "MINOR",
+    "severity_score": 1,
+    "confidence": 88.17,
+    "probabilities": {
+      "NONE": 4.38,
+      "MINOR": 88.17,
+      "MAJOR": 6.39,
+      "CRITICAL": 1.06
+    },
+    "is_god_class": false,
+    "recommendation": "Monitor for growth. Consider refactoring if metrics increase."
+  },
+  {
+    "class_name": "InventoryManagementSystem",
+    "file_path": "data/sample/Example_3_HIGH_InventoryManagementSystem.java",
+    "predicted_severity": "MAJOR",
+    "severity_score": 2,
+    "confidence": 85.43,
+    "probabilities": {
+      "NONE": 0.15,
+      "MINOR": 4.2,
+      "MAJOR": 85.43,
+      "CRITICAL": 10.22
+    },
+    "is_god_class": true,
+    "recommendation": "Schedule refactoring. This class shows signs of becoming a God Class."
+  },
+  {
+    "class_name": "EnterpriseResourcePlanner",
+    "file_path": "data/sample/Example_4_CRITICAL_EnterpriseResourcePlanner.java",
+    "predicted_severity": "CRITICAL",
+    "severity_score": 3,
+    "confidence": 91.76,
+    "probabilities": {
+      "NONE": 0.02,
+      "MINOR": 0.05,
+      "MAJOR": 8.17,
+      "CRITICAL": 91.76
+    },
+    "is_god_class": true,
+    "recommendation": "URGENT: Immediate decomposition required. This is a severe God Class."
+  },
+  {
+    "class_name": "UserService",
+    "file_path": "data/sample/UserService.java",
+    "predicted_severity": "MINOR",
+    "severity_score": 1,
+    "confidence": 37.45,
+    "probabilities": {
+      "NONE": 17.69,
+      "MINOR": 37.45,
+      "MAJOR": 22.17,
+      "CRITICAL": 22.69
+    },
+    "is_god_class": false,
+    "recommendation": "Monitor for growth. Consider refactoring if metrics increase."
+  }
+]

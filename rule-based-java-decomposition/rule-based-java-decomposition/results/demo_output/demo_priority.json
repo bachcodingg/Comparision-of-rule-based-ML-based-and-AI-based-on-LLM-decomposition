@@ -1,0 +1,19 @@
+{
+  "priority_score": 2.95,
+  "priority_label": "HIGH",
+  "recommendation": "Refactor when time permits",
+  "is_god_class_candidate": true,
+  "severity_counts": {
+    "low": 0,
+    "medium": 1,
+    "high": 3,
+    "critical": 1
+  },
+  "weights": {
+    "loc": 0.25,
+    "wmc": 0.25,
+    "cbo": 0.2,
+    "lcom": 0.15,
+    "nom": 0.15
+  }
+}

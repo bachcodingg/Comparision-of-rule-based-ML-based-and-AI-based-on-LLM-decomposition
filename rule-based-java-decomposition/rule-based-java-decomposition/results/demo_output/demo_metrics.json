@@ -1,0 +1,19 @@
+{
+  "file_path": "data/sample/UserService.java",
+  "class_name": "violates",
+  "package": "com.example.demo",
+  "loc": 241,
+  "nom": 40,
+  "nof": 15,
+  "noa": 15,
+  "cc": 1.56,
+  "wmc": 64,
+  "cbo": 41,
+  "fanout": 41,
+  "lcom": 0.879,
+  "dit": 0,
+  "rfc": 57,
+  "public_methods": 34,
+  "private_methods": 6,
+  "protected_methods": 0
+}

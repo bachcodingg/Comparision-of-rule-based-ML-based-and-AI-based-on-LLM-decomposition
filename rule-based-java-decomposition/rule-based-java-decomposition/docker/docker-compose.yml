@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  # Main analysis service
+  analyzer:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    volumes:
+      - ../data:/app/data
+      - ../results:/app/results
+      - ../logs:/app/logs
+    environment:
+      - PYTHONPATH=/app
+    command: ["--all"]
+
+  # Jupyter notebook service for exploration
+  jupyter:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8888:8888"
+    volumes:
+      - ../data:/app/data
+      - ../results:/app/results
+      - ../notebooks:/app/notebooks
+    environment:
+      - PYTHONPATH=/app
+    command: >
+      jupyter notebook 
+      --ip=0.0.0.0 
+      --port=8888 
+      --no-browser 
+      --allow-root 
+      --NotebookApp.token=''
+      --NotebookApp.password=''
+
+  # Run tests
+  test:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    volumes:
+      - ../:/app
+    environment:
+      - PYTHONPATH=/app
+    entrypoint: ["pytest"]
+    command: ["tests/", "-v", "--cov=src"]
+
+volumes:
+  data:
+  results:
+  logs:

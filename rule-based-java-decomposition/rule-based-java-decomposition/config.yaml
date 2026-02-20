@@ -1,0 +1,323 @@
+# ============================================================
+# RULE-BASED JAVA DECOMPOSITION CONFIGURATION
+# Detecting Large Java Classes for Decomposition
+# Research-Based Approach (2022-2023)
+# ============================================================
+
+project:
+  name: "rule-based-java-decomposition"
+  version: "2.0.0"
+  description: "Rule-based approach using severity-based detection with empirically validated thresholds"
+
+# ------------------------------------------------------------
+# DATA SETTINGS
+# ------------------------------------------------------------
+data:
+  # Java repositories to analyze
+  repositories:
+    - name: "commons-lang"
+      url: "https://github.com/apache/commons-lang.git"
+      branch: "master"
+    - name: "commons-io"
+      url: "https://github.com/apache/commons-io.git"
+      branch: "master"
+    - name: "junit4"
+      url: "https://github.com/junit-team/junit4.git"
+      branch: "main"
+    - name: "guava"
+      url: "https://github.com/google/guava.git"
+      branch: "master"
+    - name: "spring-framework"
+      url: "https://github.com/spring-projects/spring-framework.git"
+      branch: "main"
+
+  # Paths
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  sample_dir: "data/sample"
+
+# ------------------------------------------------------------
+# RULE-BASED ANALYZER SETTINGS
+# Research Foundation:
+# - Dewangan et al. (2023): Severity Classification Using ML
+# - Rao et al. (2023): PCA-based Feature Selection
+# - Gupta & Chauhan (2022): Severity Assessment in Java
+# - Verma et al. (2023): Code Smell Prioritization Review
+# ------------------------------------------------------------
+rules:
+  # PMD Static Analyzer
+  pmd:
+    enabled: true
+    version: "7.0.0"
+    executable: "pmd"
+    ruleset: "src/rules/pmd_rules.xml"
+
+    # PMD Rule Configuration
+    rules:
+      - name: "GodClass"
+        enabled: true
+        description: "Detects classes with too many responsibilities"
+
+      - name: "ExcessiveClassLength"
+        enabled: true
+        threshold: 500
+        description: "Classes exceeding LOC threshold"
+
+      - name: "TooManyMethods"
+        enabled: true
+        threshold: 20
+        description: "Classes with too many methods"
+
+      - name: "ExcessivePublicCount"
+        enabled: true
+        threshold: 25
+        description: "Classes with too many public members"
+
+      - name: "CouplingBetweenObjects"
+        enabled: true
+        threshold: 15
+        description: "High coupling between classes"
+
+      - name: "CyclomaticComplexity"
+        enabled: true
+        threshold: 50
+        description: "High cyclomatic complexity"
+
+  # Custom Rule Thresholds (4-Level Severity System)
+  # Based on empirical research from 2022-2023
+  thresholds:
+    # Lines of Code (LOC)
+    # Source: Dewangan et al. (2023), Rao et al. (2023)
+    lines_of_code:
+      low: 200 # 1-200: Low severity
+      medium: 500 # 201-500: Medium severity
+      high: 1000 # 501-1000: High severity
+      critical: 1001 # >1000: Critical severity
+
+    # Number of Methods (NOM)
+    # Source: Dewangan et al. (2023)
+    number_of_methods:
+      low: 10 # 1-10: Low severity
+      medium: 20 # 11-20: Medium severity
+      high: 40 # 21-40: High severity
+      critical: 41 # >40: Critical severity
+
+    # Weighted Methods per Class (WMC)
+    # Source: Gupta & Chauhan (2022), Verma et al. (2023)
+    weighted_methods_per_class:
+      low: 30 # 1-30: Low severity
+      medium: 60 # 31-60: Medium severity
+      high: 100 # 61-100: High severity
+      critical: 101 # >100: Critical severity
+
+    # Coupling Between Objects (CBO)
+    # Source: Dewangan et al. (2023)
+    coupling_between_objects:
+      low: 5 # 1-5: Low severity
+      medium: 10 # 6-10: Medium severity
+      high: 20 # 11-20: High severity
+      critical: 21 # >20: Critical severity
+
+    # Lack of Cohesion of Methods (LCOM)
+    # Source: Rao et al. (2023), Gupta & Chauhan (2022)
+    lack_of_cohesion:
+      low: 0.4 # 0.0-0.4: Low severity (good cohesion)
+      medium: 0.7 # 0.41-0.7: Medium severity
+      high: 0.9 # 0.71-0.9: High severity
+      critical: 0.91 # >0.9: Critical severity (no cohesion)
+
+    # Number of Fields (NOF)
+    number_of_fields:
+      low: 10
+      medium: 15
+      high: 25
+      critical: 26
+
+    # Cyclomatic Complexity (CC)
+    cyclomatic_complexity:
+      low: 30
+      medium: 50
+      high: 100
+      critical: 101
+
+    # Depth of Inheritance Tree (DIT)
+    depth_of_inheritance:
+      low: 2
+      medium: 3
+      high: 5
+      critical: 6
+
+    # Response for a Class (RFC)
+    response_for_class:
+      low: 20
+      medium: 30
+      high: 50
+      critical: 51
+
+  # Composite Rules (Multi-Metric Detection)
+  # Based on: Dewangan et al. (2023), Verma et al. (2023)
+  # Multi-metric detection reduces false positives
+  composite_rules:
+    - name: "GodClassCandidate"
+      description: "Class shows God Class anti-pattern (2+ metrics at HIGH or CRITICAL)"
+      conditions:
+        min_violations: 2 # 2 or more metrics must trigger
+        severity_level: "high" # Must be at HIGH or CRITICAL level
+        metrics:
+          - "lines_of_code >= high"
+          - "number_of_methods >= high"
+          - "weighted_methods_per_class >= high"
+          - "coupling_between_objects >= high"
+          - "lack_of_cohesion >= high"
+
+    - name: "CriticalRefactorCandidate"
+      description: "Class urgently needs refactoring (2+ metrics at CRITICAL)"
+      conditions:
+        min_violations: 2
+        severity_level: "critical"
+        metrics:
+          - "lines_of_code >= critical"
+          - "number_of_methods >= critical"
+          - "weighted_methods_per_class >= critical"
+          - "coupling_between_objects >= critical"
+
+# ------------------------------------------------------------
+# METRICS EXTRACTION SETTINGS
+# ------------------------------------------------------------
+metrics:
+  # Code Metrics to Extract (CK Metrics Suite + Size Metrics)
+  code_metrics:
+    - name: "loc"
+      full_name: "Lines of Code"
+      description: "Total non-blank, non-comment lines"
+
+    - name: "nom"
+      full_name: "Number of Methods"
+      description: "Count of methods in the class"
+
+    - name: "nof"
+      full_name: "Number of Fields"
+      description: "Count of fields/attributes"
+
+    - name: "noa"
+      full_name: "Number of Attributes"
+      description: "Count of public/private attributes"
+
+    - name: "cc"
+      full_name: "Cyclomatic Complexity"
+      description: "McCabe cyclomatic complexity"
+
+    - name: "wmc"
+      full_name: "Weighted Methods per Class"
+      description: "Sum of complexity of all methods (Chidamber & Kemerer 1994)"
+
+    - name: "cbo"
+      full_name: "Coupling Between Objects"
+      description: "Number of classes this class depends on (Chidamber & Kemerer 1994)"
+
+    - name: "lcom"
+      full_name: "Lack of Cohesion of Methods"
+      description: "Measure of class cohesion 0-1 (Chidamber & Kemerer 1994)"
+
+    - name: "dit"
+      full_name: "Depth of Inheritance Tree"
+      description: "Levels of inheritance (Chidamber & Kemerer 1994)"
+
+    - name: "noc"
+      full_name: "Number of Children"
+      description: "Direct subclasses (Chidamber & Kemerer 1994)"
+
+    - name: "rfc"
+      full_name: "Response for a Class"
+      description: "Methods + methods called (Chidamber & Kemerer 1994)"
+
+  # JavaParser settings
+  parser:
+    encoding: "UTF-8"
+    skip_tests: true
+    skip_generated: true
+    file_extensions:
+      - ".java"
+
+# ------------------------------------------------------------
+# ANALYSIS SETTINGS
+# Severity-Based Priority Scoring (Verma et al. 2023)
+# ------------------------------------------------------------
+analysis:
+  # Severity levels (4-level system from Rao et al. 2023)
+  severity_weights:
+    low: 1 # Minor issues, could be improved
+    medium: 2 # Moderate issues, should be addressed
+    high: 3 # Significant problems, needs refactoring
+    critical: 4 # Urgent, high technical debt
+
+  # Scoring
+  scoring:
+    enabled: true
+    max_score: 100
+
+  # Priority calculation (Severity-Weighted Formula)
+  # Formula: Priority = Σ (Severity_Score × Metric_Weight)
+  # Based on: Verma et al. (2023)
+  priority:
+    factors:
+      - metric: "loc"
+        weight: 0.25 # Size is fundamental indicator
+      - metric: "wmc"
+        weight: 0.25 # Complexity drives maintenance cost
+      - metric: "cbo"
+        weight: 0.20 # Coupling affects change propagation
+      - metric: "lcom"
+        weight: 0.15 # Cohesion indicates separation quality
+      - metric: "nom"
+        weight: 0.15 # Method count reflects behavioral complexity
+
+# ------------------------------------------------------------
+# EVALUATION SETTINGS
+# ------------------------------------------------------------
+evaluation:
+  # Ground truth from RefactoringMiner
+  ground_truth:
+    source: "refactoring_miner"
+    refactoring_types:
+      - "Extract Class"
+      - "Extract Superclass"
+      - "Extract Interface"
+
+  # Metrics to compute
+  metrics:
+    - "precision"
+    - "recall"
+    - "f1_score"
+    - "accuracy"
+    - "true_positives"
+    - "false_positives"
+    - "true_negatives"
+    - "false_negatives"
+
+# ------------------------------------------------------------
+# OUTPUT SETTINGS
+# ------------------------------------------------------------
+output:
+  results_dir: "results"
+  charts_dir: "results/charts"
+  reports_dir: "results/reports"
+
+  formats:
+    - "csv"
+    - "json"
+    - "html"
+
+  # Report settings
+  report:
+    include_charts: true
+    include_recommendations: true
+    max_violations_per_class: 10
+
+# ------------------------------------------------------------
+# LOGGING
+# ------------------------------------------------------------
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/analysis.log"

@@ -1,0 +1,248 @@
+{
+  "original_class": "ClothingInventoryManager",
+  "original_file": "data/sample/ClothingInventoryManager.java",
+  "triggered_rules": [
+    {
+      "rule_id": "R1",
+      "rule_name": "ExcessiveLinesOfCode",
+      "description": "Class exceeds recommended lines of code",
+      "threshold": 300,
+      "actual_value": 383,
+      "triggered": true,
+      "severity": "WARNING",
+      "reference": "Lanza & Marinescu (2006), PMD ExcessiveClassLength"
+    },
+    {
+      "rule_id": "R2",
+      "rule_name": "TooManyMethods",
+      "description": "Class has too many methods indicating multiple responsibilities",
+      "threshold": 35,
+      "actual_value": 60,
+      "triggered": true,
+      "severity": "SEVERE",
+      "reference": "PMD TooManyMethods, Fowler (1999) Large Class smell"
+    },
+    {
+      "rule_id": "R3",
+      "rule_name": "HighComplexity",
+      "description": "Weighted Methods per Class exceeds threshold",
+      "threshold": 50,
+      "actual_value": 85,
+      "triggered": true,
+      "severity": "WARNING",
+      "reference": "Chidamber & Kemerer (1994) CK Metrics Suite"
+    },
+    {
+      "rule_id": "R4",
+      "rule_name": "HighCoupling",
+      "description": "Class has high coupling with other classes",
+      "threshold": 10,
+      "actual_value": 14,
+      "triggered": true,
+      "severity": "WARNING",
+      "reference": "Briand et al. (1999), PMD CouplingBetweenObjects"
+    },
+    {
+      "rule_id": "R5",
+      "rule_name": "LowCohesion",
+      "description": "Lack of Cohesion indicates multiple responsibilities",
+      "threshold": 0.7,
+      "actual_value": 0.77,
+      "triggered": true,
+      "severity": "CRITICAL",
+      "reference": "Chidamber & Kemerer (1994), Henderson-Sellers LCOM"
+    },
+    {
+      "rule_id": "R6",
+      "rule_name": "GodClassCandidate",
+      "description": "Multiple metrics exceed thresholds (5/5 violations)",
+      "threshold": 3,
+      "actual_value": 5,
+      "triggered": true,
+      "severity": "SEVERE",
+      "reference": "Brown et al. (1998) AntiPatterns, Fowler (1999)"
+    }
+  ],
+  "final_decision": "DECOMPOSE",
+  "priority_score": 3.07,
+  "metrics_before": {
+    "loc": 383,
+    "nom": 60,
+    "nof": 41,
+    "wmc": 85,
+    "cbo": 14,
+    "lcom": 0.77
+  },
+  "metrics_after": {
+    "loc": 127,
+    "nom": 25,
+    "nof": 23,
+    "wmc": 37,
+    "cbo": 1,
+    "lcom": 0.3
+  },
+  "metrics_comparison": [
+    {
+      "metric": "Lines of Code",
+      "before": 383,
+      "after": 127,
+      "improvement": "66.8%",
+      "interpretation": "\u2193 66.8% reduction means smaller, more focused class"
+    },
+    {
+      "metric": "Number of Methods",
+      "before": 60,
+      "after": 25,
+      "improvement": "58.3%",
+      "interpretation": "\u2193 58.3% fewer methods = clearer single responsibility"
+    },
+    {
+      "metric": "Weighted Methods/Class",
+      "before": 85,
+      "after": 37,
+      "improvement": "56.5%",
+      "interpretation": "\u2193 56.5% lower complexity = easier maintenance"
+    },
+    {
+      "metric": "Coupling Between Objects",
+      "before": 14,
+      "after": 1,
+      "improvement": "92.9%",
+      "interpretation": "\u2193 92.9% lower coupling = less change propagation risk"
+    },
+    {
+      "metric": "Lack of Cohesion",
+      "before": 0.77,
+      "after": 0.3,
+      "improvement": "61.0%",
+      "interpretation": "\u2193 61.0% lower LCOM = better internal cohesion"
+    }
+  ],
+  "method_groups": [
+    {
+      "group_id": 1,
+      "methods": [
+        "getAvailableSizes",
+        "isValidSize",
+        "updateSizeInventory",
+        "addToClearance",
+        "setPromotionalDiscount",
+        "getLowStockSizes",
+        "removeItem",
+        "isOnClearance",
+        "isValidCategory",
+        "getSalesByCategory",
+        "isSizeAvailable",
+        "getTopSellingItems",
+        "addItem",
+        "getAllItems",
+        "getSizeCount",
+        "getItem",
+        "getTotalSalesCount",
+        "updateDailySales"
+      ],
+      "shared_fields": [
+        "itemId",
+        "inventory",
+        "size",
+        "sizeInventory",
+        "sizeAvailability",
+        "clearanceItems",
+        "itemIds",
+        "category",
+        "dailySalesCount"
+      ],
+      "reason": "Methods share access to fields: itemId, inventory, size...",
+      "cohesion_score": 0.16,
+      "suggested_name": "ClothingInventoryCategoryManagement",
+      "responsibility": "Category Management"
+    },
+    {
+      "group_id": 4,
+      "methods": [
+        "calculatePriceWithTax",
+        "setTaxRate"
+      ],
+      "shared_fields": [
+        "taxRate"
+      ],
+      "reason": "Methods share access to fields: taxRate",
+      "cohesion_score": 1.0,
+      "suggested_name": "ClothingInventoryPricing",
+      "responsibility": "Pricing"
+    },
+    {
+      "group_id": 6,
+      "methods": [
+        "getCategoryCounts",
+        "getChildrenCollection",
+        "categorizeItem",
+        "getMenCollection",
+        "generateInventoryReport",
+        "getWomenCollection",
+        "removeFromCategory"
+      ],
+      "shared_fields": [
+        "womenCollection",
+        "childrenCollection",
+        "menCollection",
+        "size"
+      ],
+      "reason": "Methods share access to fields: womenCollection, childrenCollection, menCollection...",
+      "cohesion_score": 0.31,
+      "suggested_name": "ClothingInventoryCategoryManagement",
+      "responsibility": "Category Management"
+    },
+    {
+      "group_id": 9,
+      "methods": [
+        "getMostPopularColor",
+        "indexByColor",
+        "recordColorSale",
+        "getItemsByColor"
+      ],
+      "shared_fields": [
+        "color",
+        "colorSalesCount",
+        "colorIndex"
+      ],
+      "reason": "Methods share access to fields: color, colorSalesCount, colorIndex",
+      "cohesion_score": 0.58,
+      "suggested_name": "ClothingInventoryColorManagement",
+      "responsibility": "Color Management"
+    },
+    {
+      "group_id": 15,
+      "methods": [
+        "setCurrentSeason",
+        "getSeasonalDiscount",
+        "setSeason",
+        "initializeSeasonalDiscounts"
+      ],
+      "shared_fields": [
+        "season",
+        "seasonalDiscounts"
+      ],
+      "reason": "Methods share access to fields: season, seasonalDiscounts",
+      "cohesion_score": 0.5,
+      "suggested_name": "ClothingInventorySeasonalManagement",
+      "responsibility": "Seasonal Management"
+    }
+  ],
+  "grouping_algorithm": "\nMethods are grouped using shared attribute access and call dependencies:\n1. Build method-field access matrix\n2. Calculate Jaccard similarity between method pairs\n3. Cluster methods with similarity > 0.3 (30% shared field access)\n4. Identify responsibility based on field/method naming patterns\n\nReference: Bavota et al. (2014), CodART Extract Class implementation\n",
+  "extracted_classes": [
+    "ClothingInventoryCategoryManagement",
+    "ClothingInventoryPricing",
+    "ClothingInventoryCategoryManagement",
+    "ClothingInventoryColorManagement",
+    "ClothingInventorySeasonalManagement"
+  ],
+  "limitations": [
+    "Regex-based parsing may miss edge cases (production should use ANTLR like CodART)",
+    "Works best on single-responsibility violations, not algorithm-heavy classes",
+    "Metric thresholds may need tuning for different project domains",
+    "Cannot capture semantic relationships or business logic considerations",
+    "Requires human review before applying refactoring to production code",
+    "Ground truth from historical refactorings may be incomplete"
+  ]
+}
