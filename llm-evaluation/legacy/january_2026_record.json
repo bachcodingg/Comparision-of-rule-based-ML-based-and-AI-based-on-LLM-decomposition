@@ -1,0 +1,53 @@
+{
+  "description": "Method-level recommendations transcribed from AI_AGENT_PERFORMANCE_REPORT_FIXED.txt (January 2026, manual chat sessions, one run per file). Only the Claude 3.5 Sonnet entries list methods; the GPT-4 Turbo and Gemini Pro entries in that report are short summaries with no method assignments, so they cannot be scored.",
+  "caveats": [
+    "The input files contained the expected severity, metric values and (for one file) a suggested decomposition in their comments, and the file names contained the label.",
+    "No raw transcripts were kept; this is the author's summary of the model output.",
+    "Model versions, temperature and interface were not recorded."
+  ],
+  "source_dir": "../rule-based-java-decomposition/rule-based-java-decomposition/data/sample",
+  "recommendations": [
+    {
+      "model": "Claude 3.5 Sonnet",
+      "file": "Example_2_MEDIUM_OrderProcessor.java",
+      "proposed_classes": [
+        {"name": "OrderManager", "methods": ["addOrder", "processOrder", "removeOrder", "findOrder"]},
+        {"name": "PricingCalculator", "methods": ["calculateOrderTotal", "getDiscount", "calculateTax"]},
+        {"name": "OrderReporter", "methods": ["getTotalRevenue", "getAverageOrderValue", "generateReport"]}
+      ],
+      "methods_kept": []
+    },
+    {
+      "model": "Claude 3.5 Sonnet",
+      "file": "Example_3_HIGH_InventoryManagementSystem.java",
+      "proposed_classes": [
+        {"name": "ProductCatalog", "methods": ["addProduct", "updateProduct", "deleteProduct", "searchProducts", "getProductsByCategory", "updatePrice"]},
+        {"name": "InventoryController", "methods": ["addStock", "removeStock", "getStock", "setStock", "isAvailable", "getLowStockProducts"]},
+        {"name": "SupplierService", "methods": ["addSupplier", "updateSupplier", "getBestSupplier", "getSupplierProducts", "removeSupplier"]},
+        {"name": "PurchaseOrderProcessor", "methods": ["createPurchaseOrder", "approvePurchaseOrder", "receivePurchaseOrder", "cancelPurchaseOrder"]},
+        {"name": "InventoryReporter", "methods": ["generateStockReport", "generateValuationReport", "exportReportToCsv", "generateAlerts"]}
+      ],
+      "methods_kept": []
+    },
+    {
+      "model": "Claude 3.5 Sonnet",
+      "file": "Example_4_CRITICAL_EnterpriseResourcePlanner.java",
+      "proposed_classes": [
+        {"name": "EmployeeService", "methods": ["addEmployee", "updateEmployee", "deleteEmployee", "getEmployee", "listEmployees"]},
+        {"name": "DepartmentService", "methods": ["createDepartment", "updateDepartment", "assignEmployee", "getDepartmentHeadcount"]},
+        {"name": "PayrollProcessor", "methods": ["calculateSalary", "processBonuses", "calculateTax", "generatePayslip", "processPayroll"]},
+        {"name": "ProductCatalogService", "methods": ["addProduct", "updateProduct", "deleteProduct", "searchProducts", "getProductsByCategory", "updateProductDescription"]},
+        {"name": "InventoryService", "methods": ["addStock", "removeStock", "getStockLevel", "reserveStock", "releaseStock", "getLowStockProducts", "triggerReorderAlert"]},
+        {"name": "OrderManagementService", "methods": ["createOrder", "updateOrder", "cancelOrder", "processOrder", "shipOrder", "completeOrder", "getOrderStatus", "getOrderHistory"]},
+        {"name": "InvoiceService", "methods": ["createInvoice", "sendInvoice", "recordPayment", "getOutstandingInvoices", "sendPaymentReminder"]},
+        {"name": "PaymentProcessor", "methods": ["processPayment", "refundPayment", "validatePaymentMethod", "getTransactionHistory"]},
+        {"name": "ShippingService", "methods": ["createShipment", "updateTracking", "selectCarrier", "calculateShippingCost", "getDeliveryEstimate"]},
+        {"name": "NotificationService", "methods": ["sendEmail", "sendSMS", "sendPushNotification", "queueNotification", "processNotificationQueue", "getNotificationHistory"]},
+        {"name": "ReportingService", "methods": ["generateSalesReport", "generateInventoryReport", "generateCustomerReport", "exportReport", "scheduleReport"]},
+        {"name": "DatabaseConnectionManager", "methods": ["getConnection", "releaseConnection", "executeQuery", "executeTransaction"]},
+        {"name": "ConfigurationManager", "methods": ["loadConfiguration", "getProperty", "updateConfiguration"]}
+      ],
+      "methods_kept": []
+    }
+  ]
+}

@@ -20,6 +20,15 @@ from sklearn.ensemble import (
 from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.decomposition import PCA
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+try:
+    from imblearn.over_sampling import SMOTE
+    IMBLEARN_AVAILABLE = True
+except ImportError:
+    IMBLEARN_AVAILABLE = False
 
 try:
     from xgboost import XGBClassifier
@@ -28,6 +37,11 @@ except ImportError:
     XGBOOST_AVAILABLE = False
 
 warnings.filterwarnings('ignore')
+
+# Model inputs, in order. 'cyclomatic' was removed: the extractor computed it as
+# the same number as WMC, while the generator sampled it independently, so the
+# model was trained on a feature that behaved differently on real files.
+FEATURES = ['loc', 'sloc', 'wmc', 'cbo', 'lcom', 'nom', 'noa']
 
 
 @dataclass
@@ -56,6 +70,7 @@ class ModelPerformance:
     f1_score: float
     cv_mean: float
     cv_std: float
+    f1_macro: float = 0.0
     
     def to_dict(self) -> Dict:
         return asdict(self)
@@ -73,14 +88,36 @@ class SeverityClassifier:
         'CRITICAL': "URGENT: Immediate decomposition required. This is a severe God Class."
     }
     
-    def __init__(self, config: Optional[Dict] = None):
+    def __init__(self, config: Optional[Dict] = None,
+                 use_smote: bool = False, use_pca: bool = False):
+        """
+        Args:
+            config: Parsed config.yaml.
+            use_smote: Oversample the training split with SMOTE (k=5).
+                The synthetic data is generated with equal class sizes, so
+                this only changes the model when the classes are imbalanced.
+            use_pca: Standardise the features and keep the principal
+                components that explain 95% of the variance. Models then no
+                longer see the raw metrics, so per-metric feature importance
+                is not available in this mode.
+
+        Both default to False, which is the configuration that produced the
+        committed results.
+        """
         self.config = config or {}
         self.logger = logging.getLogger(__name__)
+        self.use_smote = use_smote
+        self.use_pca = use_pca
         self.models = {}
         self.ensemble_model = None
         self.feature_names = None
         self.is_trained = False
         self._init_models()
+        if self.use_pca:
+            self.models = {
+                name: make_pipeline(StandardScaler(), PCA(n_components=0.95), model)
+                for name, model in self.models.items()
+            }
     
     def _init_models(self):
         """Initialize ML models."""
@@ -111,7 +148,22 @@ class SeverityClassifier:
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.2, stratify=y, random_state=42
         )
-        
+
+        # Cross-validation runs on the training split only. It previously ran
+        # on all data, so the held-out split was also used for model scoring.
+        X_cv, y_cv = X_train, y_train
+
+        if self.use_smote:
+            if not IMBLEARN_AVAILABLE:
+                raise RuntimeError("use_smote=True requires imbalanced-learn")
+            # Resample the training split only, so the held-out split stays
+            # untouched. Cross-validation below uses the training split as it
+            # was before resampling.
+            before = np.bincount(y_train)
+            X_train, y_train = SMOTE(k_neighbors=5, random_state=42).fit_resample(X_train, y_train)
+            self.logger.info(f"SMOTE: class counts {before.tolist()} -> "
+                             f"{np.bincount(y_train).tolist()}")
+
         performances = {}
         
         for name, model in self.models.items():
@@ -119,7 +171,7 @@ class SeverityClassifier:
             model.fit(X_train, y_train)
             
             y_pred = model.predict(X_test)
-            cv_scores = cross_val_score(model, X, y, cv=5, scoring='f1_weighted')
+            cv_scores = cross_val_score(model, X_cv, y_cv, cv=5, scoring='f1_weighted')
             
             perf = ModelPerformance(
                 model_name=name,
@@ -128,7 +180,8 @@ class SeverityClassifier:
                 recall=round(recall_score(y_test, y_pred, average='weighted', zero_division=0), 4),
                 f1_score=round(f1_score(y_test, y_pred, average='weighted', zero_division=0), 4),
                 cv_mean=round(np.mean(cv_scores), 4),
-                cv_std=round(np.std(cv_scores), 4)
+                cv_std=round(np.std(cv_scores), 4),
+                f1_macro=round(f1_score(y_test, y_pred, average='macro', zero_division=0), 4)
             )
             performances[name] = perf
         
@@ -139,7 +192,7 @@ class SeverityClassifier:
             self.ensemble_model.fit(X_train, y_train)
             
             y_pred = self.ensemble_model.predict(X_test)
-            cv_scores = cross_val_score(self.ensemble_model, X, y, cv=5, scoring='f1_weighted')
+            cv_scores = cross_val_score(self.ensemble_model, X_cv, y_cv, cv=5, scoring='f1_weighted')
             
             performances['ensemble'] = ModelPerformance(
                 model_name='ensemble',
@@ -148,7 +201,8 @@ class SeverityClassifier:
                 recall=round(recall_score(y_test, y_pred, average='weighted', zero_division=0), 4),
                 f1_score=round(f1_score(y_test, y_pred, average='weighted', zero_division=0), 4),
                 cv_mean=round(np.mean(cv_scores), 4),
-                cv_std=round(np.std(cv_scores), 4)
+                cv_std=round(np.std(cv_scores), 4),
+                f1_macro=round(f1_score(y_test, y_pred, average='macro', zero_division=0), 4)
             )
         
         self.is_trained = True
@@ -172,8 +226,7 @@ class SeverityClassifier:
     
     def classify_file(self, metrics: Dict, model_name: str = 'ensemble') -> ClassificationResult:
         """Classify a single file."""
-        feature_order = self.feature_names or ['loc', 'sloc', 'wmc', 'cyclomatic', 
-                                                'cbo', 'lcom', 'nom', 'noa']
+        feature_order = self.feature_names or FEATURES
         features = [metrics.get(f, 0) for f in feature_order]
         X = np.array(features).reshape(1, -1)
         
@@ -204,6 +257,9 @@ class SeverityClassifier:
         if model_name not in self.models or not self.feature_names:
             return {}
         model = self.models[model_name]
+        if self.use_pca:
+            # Importances would refer to principal components, not metrics.
+            return {}
         if hasattr(model, 'feature_importances_'):
             return dict(sorted(
                 zip(self.feature_names, model.feature_importances_),
@@ -219,7 +275,9 @@ class SeverityClassifier:
                 'models': self.models,
                 'ensemble': self.ensemble_model,
                 'features': self.feature_names,
-                'trained': self.is_trained
+                'trained': self.is_trained,
+                'use_smote': self.use_smote,
+                'use_pca': self.use_pca
             }, f)
     
     def load_model(self, path: str):
@@ -230,62 +288,70 @@ class SeverityClassifier:
         self.ensemble_model = data['ensemble']
         self.feature_names = data['features']
         self.is_trained = data['trained']
+        self.use_smote = data.get('use_smote', False)
+        self.use_pca = data.get('use_pca', False)
 
 
-def generate_synthetic_training_data(n_samples: int = 2000, 
-                                     random_state: int = 42) -> Tuple[np.ndarray, np.ndarray]:
-    """Generate synthetic training data based on empirical distributions.
-    
-    Ranges include realistic overlap between severity levels (~15-20%) to prevent
-    overfitting on perfectly separable data. Gaussian noise is added to simulate
-    real-world metric variation.
-    
-    Based on threshold distributions from:
-    - Dewangan et al. (2023) severity thresholds
-    - Rao et al. (2023) empirical distributions
-    - Gupta & Chauhan (2022) Java-specific ranges
+def generate_synthetic_training_data(n_samples: int = 2000,
+                                     random_state: int = 42,
+                                     class_proportions: Optional[List[float]] = None
+                                     ) -> Tuple[np.ndarray, np.ndarray]:
+    """Generate synthetic training data from hand-chosen metric ranges.
+
+    Every sample is drawn from the range box of one severity level and labelled
+    with that level. The label is therefore a function of the generator, not of
+    any real code: accuracy measured on data from this function shows that a
+    model can recover the ranges below, and nothing about detecting God Classes
+    in real projects.
+
+    The ranges are placed around the severity thresholds used by the rule-based
+    pipeline (cut-offs in the style of Dewangan et al. 2023 and Gupta & Chauhan
+    2022) with roughly 15-20% overlap between adjacent levels. They were chosen
+    by the author and adjusted during development while the six sample classes
+    were being classified; they are not fitted to a labelled dataset.
+
+    Args:
+        n_samples: total number of samples.
+        random_state: seed for numpy's global generator.
+        class_proportions: share of NONE, MINOR, MAJOR, CRITICAL samples.
+            Default is equal shares. Pass e.g. [0.60, 0.25, 0.10, 0.05] to
+            create the class imbalance that SMOTE is meant to correct.
     """
     np.random.seed(random_state)
-    samples_per_class = n_samples // 4
-    
-    # Severity ranges with ~15-20% overlap between adjacent levels
-    # This prevents the model from learning perfectly separable boundaries
+    if class_proportions is None:
+        class_proportions = [0.25, 0.25, 0.25, 0.25]
+    if len(class_proportions) != 4 or abs(sum(class_proportions) - 1.0) > 1e-6:
+        raise ValueError("class_proportions must be four shares that sum to 1")
+    class_counts = [int(round(n_samples * share)) for share in class_proportions]
+
     ranges = {
-        0: {'loc': (30, 220), 'sloc': (25, 200), 'wmc': (3, 35), 'cyclomatic': (3, 25),
+        0: {'loc': (30, 220), 'sloc': (25, 200), 'wmc': (3, 35),
             'cbo': (0, 6), 'lcom': (0.0, 0.35), 'nom': (2, 12), 'noa': (0, 6)},
-        1: {'loc': (180, 550), 'sloc': (160, 500), 'wmc': (25, 70), 'cyclomatic': (18, 50),
+        1: {'loc': (180, 550), 'sloc': (160, 500), 'wmc': (25, 70),
             'cbo': (4, 12), 'lcom': (0.25, 0.55), 'nom': (8, 24), 'noa': (4, 12)},
-        2: {'loc': (450, 1100), 'sloc': (400, 1000), 'wmc': (55, 120), 'cyclomatic': (35, 95),
+        2: {'loc': (450, 1100), 'sloc': (400, 1000), 'wmc': (55, 120),
             'cbo': (9, 25), 'lcom': (0.45, 0.75), 'nom': (18, 48), 'noa': (8, 24)},
-        3: {'loc': (900, 2500), 'sloc': (800, 2200), 'wmc': (90, 250), 'cyclomatic': (70, 200),
+        3: {'loc': (900, 2500), 'sloc': (800, 2200), 'wmc': (90, 250),
             'cbo': (18, 50), 'lcom': (0.65, 1.0), 'nom': (35, 100), 'noa': (18, 50)}
     }
-    
+
     features, labels = [], []
-    feature_order = ['loc', 'sloc', 'wmc', 'cyclomatic', 'cbo', 'lcom', 'nom', 'noa']
-    
     for severity, r in ranges.items():
-        for _ in range(samples_per_class):
+        for _ in range(class_counts[severity]):
             sample = []
-            for feat in feature_order:
+            for feat in FEATURES:
                 low, high = r[feat]
-                if feat == 'lcom':
-                    # Use beta distribution for LCOM (bounded 0-1)
-                    mid = (low + high) / 2
-                    val = np.clip(np.random.normal(mid, (high - low) / 4), low, high)
-                else:
-                    # Use normal distribution centered in range with noise
-                    mid = (low + high) / 2
-                    std = (high - low) / 4  # ~95% within range
-                    val = int(np.clip(np.random.normal(mid, std), low, high))
-                sample.append(val)
-            
-            # Ensure sloc <= loc
+                mid = (low + high) / 2
+                std = (high - low) / 4  # about 95% of draws fall inside the range
+                val = np.clip(np.random.normal(mid, std), low, high)
+                sample.append(float(val) if feat == 'lcom' else int(val))
+
+            # SLOC cannot exceed LOC
             if sample[1] > sample[0]:
                 sample[1] = int(sample[0] * 0.85)
-            
+
             features.append(sample)
             labels.append(severity)
-    
+
     idx = np.random.permutation(len(features))
     return np.array(features)[idx], np.array(labels)[idx]

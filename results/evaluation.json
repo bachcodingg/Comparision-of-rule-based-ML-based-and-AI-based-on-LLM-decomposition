@@ -1,0 +1,608 @@
+{
+  "dataset": {
+    "files": 6,
+    "labels": "dataset/labels.csv (assigned by the author)"
+  },
+  "metrics": [
+    {
+      "file_path": "EmailValidator.java",
+      "class_name": "EmailValidator",
+      "loc": 83,
+      "sloc": 47,
+      "nom": 5,
+      "noa": 2,
+      "wmc": 13,
+      "cbo": 0,
+      "lcom": 0.7,
+      "helper_classes": 0,
+      "constructors": 1,
+      "label": "NONE"
+    },
+    {
+      "file_path": "OrderProcessor.java",
+      "class_name": "OrderProcessor",
+      "loc": 271,
+      "sloc": 165,
+      "nom": 15,
+      "noa": 7,
+      "wmc": 38,
+      "cbo": 2,
+      "lcom": 0.7714,
+      "helper_classes": 2,
+      "constructors": 1,
+      "label": "MINOR"
+    },
+    {
+      "file_path": "UserService.java",
+      "class_name": "UserService",
+      "loc": 306,
+      "sloc": 241,
+      "nom": 40,
+      "noa": 16,
+      "wmc": 70,
+      "cbo": 0,
+      "lcom": 0.941,
+      "helper_classes": 0,
+      "constructors": 1,
+      "label": "MINOR"
+    },
+    {
+      "file_path": "ClothingInventoryManager.java",
+      "class_name": "ClothingInventoryManager",
+      "loc": 456,
+      "sloc": 383,
+      "nom": 48,
+      "noa": 32,
+      "wmc": 72,
+      "cbo": 3,
+      "lcom": 0.9317,
+      "helper_classes": 0,
+      "constructors": 1,
+      "label": "MAJOR"
+    },
+    {
+      "file_path": "InventoryManagementSystem.java",
+      "class_name": "InventoryManagementSystem",
+      "loc": 576,
+      "sloc": 383,
+      "nom": 28,
+      "noa": 16,
+      "wmc": 82,
+      "cbo": 5,
+      "lcom": 0.7619,
+      "helper_classes": 4,
+      "constructors": 1,
+      "label": "MAJOR"
+    },
+    {
+      "file_path": "EnterpriseResourcePlanner.java",
+      "class_name": "EnterpriseResourcePlanner",
+      "loc": 1002,
+      "sloc": 692,
+      "nom": 54,
+      "noa": 47,
+      "wmc": 126,
+      "cbo": 15,
+      "lcom": 0.8512,
+      "helper_classes": 12,
+      "constructors": 1,
+      "label": "CRITICAL"
+    }
+  ],
+  "rule_based": {
+    "thresholds": {
+      "loc": [
+        200,
+        500,
+        1000
+      ],
+      "nom": [
+        10,
+        20,
+        40
+      ],
+      "wmc": [
+        30,
+        60,
+        100
+      ],
+      "cbo": [
+        5,
+        10,
+        20
+      ],
+      "lcom": [
+        0.4,
+        0.7,
+        0.9
+      ]
+    },
+    "weights": {
+      "loc": 0.25,
+      "wmc": 0.25,
+      "cbo": 0.2,
+      "lcom": 0.15,
+      "nom": 0.15
+    },
+    "files": [
+      {
+        "class_name": "EmailValidator",
+        "label": "NONE",
+        "score": 1.15,
+        "severity": "NONE",
+        "severity_legacy_bins": "MINOR",
+        "god_class_candidate": false,
+        "metric_levels": {
+          "loc": "LOW",
+          "nom": "LOW",
+          "wmc": "LOW",
+          "cbo": "LOW",
+          "lcom": "MEDIUM"
+        },
+        "seconds": 0.0018
+      },
+      {
+        "class_name": "OrderProcessor",
+        "label": "MINOR",
+        "score": 1.95,
+        "severity": "MINOR",
+        "severity_legacy_bins": "MINOR",
+        "god_class_candidate": false,
+        "metric_levels": {
+          "loc": "MEDIUM",
+          "nom": "MEDIUM",
+          "wmc": "MEDIUM",
+          "cbo": "LOW",
+          "lcom": "HIGH"
+        },
+        "seconds": 0.0066
+      },
+      {
+        "class_name": "UserService",
+        "label": "MINOR",
+        "score": 2.5,
+        "severity": "MAJOR",
+        "severity_legacy_bins": "MAJOR",
+        "god_class_candidate": true,
+        "metric_levels": {
+          "loc": "MEDIUM",
+          "nom": "HIGH",
+          "wmc": "HIGH",
+          "cbo": "LOW",
+          "lcom": "CRITICAL"
+        },
+        "seconds": 0.0096
+      },
+      {
+        "class_name": "ClothingInventoryManager",
+        "label": "MAJOR",
+        "score": 2.65,
+        "severity": "MAJOR",
+        "severity_legacy_bins": "MAJOR",
+        "god_class_candidate": true,
+        "metric_levels": {
+          "loc": "MEDIUM",
+          "nom": "CRITICAL",
+          "wmc": "HIGH",
+          "cbo": "LOW",
+          "lcom": "CRITICAL"
+        },
+        "seconds": 0.0177
+      },
+      {
+        "class_name": "InventoryManagementSystem",
+        "label": "MAJOR",
+        "score": 2.6,
+        "severity": "MAJOR",
+        "severity_legacy_bins": "MAJOR",
+        "god_class_candidate": true,
+        "metric_levels": {
+          "loc": "HIGH",
+          "nom": "HIGH",
+          "wmc": "HIGH",
+          "cbo": "LOW",
+          "lcom": "HIGH"
+        },
+        "seconds": 0.0174
+      },
+      {
+        "class_name": "EnterpriseResourcePlanner",
+        "label": "CRITICAL",
+        "score": 3.65,
+        "severity": "CRITICAL",
+        "severity_legacy_bins": "CRITICAL",
+        "god_class_candidate": true,
+        "metric_levels": {
+          "loc": "CRITICAL",
+          "nom": "CRITICAL",
+          "wmc": "CRITICAL",
+          "cbo": "HIGH",
+          "lcom": "HIGH"
+        },
+        "seconds": 0.0318
+      }
+    ],
+    "agreement": {
+      "severity_correct": "5/6",
+      "severity_wilson95": [
+        0.436,
+        0.97
+      ],
+      "god_class_correct": "5/6",
+      "god_class_wilson95": [
+        0.436,
+        0.97
+      ]
+    },
+    "agreement_legacy_bins": {
+      "severity_correct": "4/6",
+      "severity_wilson95": [
+        0.3,
+        0.903
+      ],
+      "god_class_correct": "5/6",
+      "god_class_wilson95": [
+        0.436,
+        0.97
+      ]
+    },
+    "median_seconds_per_file": 0.0135
+  },
+  "machine_learning": {
+    "features": [
+      "loc",
+      "sloc",
+      "wmc",
+      "cbo",
+      "lcom",
+      "nom",
+      "noa"
+    ],
+    "training": {
+      "samples": 2000,
+      "hold_out_share": 0.2,
+      "seed": 42,
+      "cv_folds": 5,
+      "cv_on": "training split only",
+      "train_seconds_all_models": 42.0
+    },
+    "models_on_synthetic_hold_out": {
+      "random_forest": {
+        "model_name": "random_forest",
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "cv_mean": 1.0,
+        "cv_std": 0.0,
+        "f1_macro": 1.0
+      },
+      "xgboost": {
+        "model_name": "xgboost",
+        "accuracy": 0.9975,
+        "precision": 0.9975,
+        "recall": 0.9975,
+        "f1_score": 0.9975,
+        "cv_mean": 0.9994,
+        "cv_std": 0.0013,
+        "f1_macro": 0.9975
+      },
+      "gradient_boosting": {
+        "model_name": "gradient_boosting",
+        "accuracy": 0.9975,
+        "precision": 0.9975,
+        "recall": 0.9975,
+        "f1_score": 0.9975,
+        "cv_mean": 0.9944,
+        "cv_std": 0.007,
+        "f1_macro": 0.9975
+      },
+      "svm": {
+        "model_name": "svm",
+        "accuracy": 0.96,
+        "precision": 0.9605,
+        "recall": 0.96,
+        "f1_score": 0.96,
+        "cv_mean": 0.9599,
+        "cv_std": 0.008,
+        "f1_macro": 0.96
+      },
+      "ensemble": {
+        "model_name": "ensemble",
+        "accuracy": 0.9975,
+        "precision": 0.9975,
+        "recall": 0.9975,
+        "f1_score": 0.9975,
+        "cv_mean": 1.0,
+        "cv_std": 0.0,
+        "f1_macro": 0.9975
+      }
+    },
+    "feature_importance_random_forest": {
+      "sloc": 0.286,
+      "loc": 0.2129,
+      "wmc": 0.1419,
+      "noa": 0.1415,
+      "nom": 0.0908,
+      "cbo": 0.087,
+      "lcom": 0.0399
+    },
+    "files": [
+      {
+        "class_name": "EmailValidator",
+        "label": "NONE",
+        "severity": "NONE",
+        "confidence": 93.96,
+        "probabilities": {
+          "NONE": 93.96,
+          "MINOR": 6.02,
+          "MAJOR": 0.01,
+          "CRITICAL": 0.01
+        },
+        "seconds": 0.0951
+      },
+      {
+        "class_name": "OrderProcessor",
+        "label": "MINOR",
+        "severity": "MINOR",
+        "confidence": 88.58,
+        "probabilities": {
+          "NONE": 4.02,
+          "MINOR": 88.58,
+          "MAJOR": 7.36,
+          "CRITICAL": 0.04
+        },
+        "seconds": 0.095
+      },
+      {
+        "class_name": "UserService",
+        "label": "MINOR",
+        "severity": "MINOR",
+        "confidence": 53.3,
+        "probabilities": {
+          "NONE": 3.66,
+          "MINOR": 53.3,
+          "MAJOR": 13.03,
+          "CRITICAL": 30.0
+        },
+        "seconds": 0.095
+      },
+      {
+        "class_name": "ClothingInventoryManager",
+        "label": "MAJOR",
+        "severity": "CRITICAL",
+        "confidence": 51.47,
+        "probabilities": {
+          "NONE": 2.57,
+          "MINOR": 16.75,
+          "MAJOR": 29.21,
+          "CRITICAL": 51.47
+        },
+        "seconds": 0.0987
+      },
+      {
+        "class_name": "InventoryManagementSystem",
+        "label": "MAJOR",
+        "severity": "MAJOR",
+        "confidence": 56.0,
+        "probabilities": {
+          "NONE": 2.08,
+          "MINOR": 10.61,
+          "MAJOR": 56.0,
+          "CRITICAL": 31.32
+        },
+        "seconds": 0.1025
+      },
+      {
+        "class_name": "EnterpriseResourcePlanner",
+        "label": "CRITICAL",
+        "severity": "CRITICAL",
+        "confidence": 79.22,
+        "probabilities": {
+          "NONE": 1.39,
+          "MINOR": 1.48,
+          "MAJOR": 17.91,
+          "CRITICAL": 79.22
+        },
+        "seconds": 0.104
+      }
+    ],
+    "agreement": {
+      "severity_correct": "5/6",
+      "severity_wilson95": [
+        0.436,
+        0.97
+      ],
+      "god_class_correct": "6/6",
+      "god_class_wilson95": [
+        0.61,
+        1.0
+      ]
+    },
+    "median_seconds_per_file": 0.0969,
+    "ablation": [
+      {
+        "training_data": "balanced",
+        "smote": false,
+        "pca": false,
+        "ensemble_accuracy": 0.9975,
+        "ensemble_f1_macro": 0.9975,
+        "ensemble_cv_f1": "1.000 +/- 0.000",
+        "files_correct": "5/6"
+      },
+      {
+        "training_data": "balanced",
+        "smote": false,
+        "pca": true,
+        "ensemble_accuracy": 1.0,
+        "ensemble_f1_macro": 1.0,
+        "ensemble_cv_f1": "1.000 +/- 0.000",
+        "files_correct": "5/6"
+      },
+      {
+        "training_data": "balanced",
+        "smote": true,
+        "pca": false,
+        "ensemble_accuracy": 0.9975,
+        "ensemble_f1_macro": 0.9975,
+        "ensemble_cv_f1": "1.000 +/- 0.000",
+        "files_correct": "5/6"
+      },
+      {
+        "training_data": "balanced",
+        "smote": true,
+        "pca": true,
+        "ensemble_accuracy": 1.0,
+        "ensemble_f1_macro": 1.0,
+        "ensemble_cv_f1": "1.000 +/- 0.000",
+        "files_correct": "5/6"
+      },
+      {
+        "training_data": "imbalanced 60/25/10/5",
+        "smote": false,
+        "pca": false,
+        "ensemble_accuracy": 1.0,
+        "ensemble_f1_macro": 1.0,
+        "ensemble_cv_f1": "1.000 +/- 0.000",
+        "files_correct": "5/6"
+      },
+      {
+        "training_data": "imbalanced 60/25/10/5",
+        "smote": false,
+        "pca": true,
+        "ensemble_accuracy": 1.0,
+        "ensemble_f1_macro": 1.0,
+        "ensemble_cv_f1": "1.000 +/- 0.000",
+        "files_correct": "5/6"
+      },
+      {
+        "training_data": "imbalanced 60/25/10/5",
+        "smote": true,
+        "pca": false,
+        "ensemble_accuracy": 1.0,
+        "ensemble_f1_macro": 1.0,
+        "ensemble_cv_f1": "1.000 +/- 0.000",
+        "files_correct": "5/6"
+      },
+      {
+        "training_data": "imbalanced 60/25/10/5",
+        "smote": true,
+        "pca": true,
+        "ensemble_accuracy": 1.0,
+        "ensemble_f1_macro": 1.0,
+        "ensemble_cv_f1": "1.000 +/- 0.000",
+        "files_correct": "5/6"
+      }
+    ]
+  },
+  "decomposition": {
+    "files": [
+      {
+        "class_name": "EmailValidator",
+        "label": "NONE",
+        "produced_output": false,
+        "extracted_classes": 0,
+        "duplicate_class_names": 0,
+        "methods_moved": 0,
+        "methods_in_class": 5,
+        "files_written": [],
+        "javac_errors": null,
+        "message": "No clear decomposition found - class may already be cohesive"
+      },
+      {
+        "class_name": "OrderProcessor",
+        "label": "MINOR",
+        "produced_output": true,
+        "extracted_classes": 1,
+        "duplicate_class_names": 0,
+        "methods_moved": 7,
+        "methods_in_class": 15,
+        "files_written": [
+          "OrderProcessor.java",
+          "OrderProcessorProcessor.java"
+        ],
+        "javac_errors": 33,
+        "message": "Successfully extracted 1 class(es)",
+        "metrics_after": {
+          "OrderProcessor.java": "not parsable (JavaSyntaxError)",
+          "OrderProcessorProcessor.java": "not parsable (JavaSyntaxError)"
+        }
+      },
+      {
+        "class_name": "UserService",
+        "label": "MINOR",
+        "produced_output": true,
+        "extracted_classes": 3,
+        "duplicate_class_names": 1,
+        "methods_moved": 13,
+        "methods_in_class": 40,
+        "files_written": [
+          "UserService.java",
+          "UserServiceComponent1.java",
+          "UserServiceDataMutator.java"
+        ],
+        "javac_errors": 60,
+        "message": "Successfully extracted 3 class(es)",
+        "metrics_after": {
+          "UserService.java": "not parsable (JavaSyntaxError)",
+          "UserServiceComponent1.java": "not parsable (JavaSyntaxError)",
+          "UserServiceDataMutator.java": "not parsable (JavaSyntaxError)"
+        }
+      },
+      {
+        "class_name": "ClothingInventoryManager",
+        "label": "MAJOR",
+        "produced_output": true,
+        "extracted_classes": 3,
+        "duplicate_class_names": 1,
+        "methods_moved": 24,
+        "methods_in_class": 48,
+        "files_written": [
+          "ClothingInventoryManager.java",
+          "ClothingInventoryManagerDataAccessor.java",
+          "ClothingInventoryManagerDataMutator.java"
+        ],
+        "javac_errors": 54,
+        "message": "Successfully extracted 3 class(es)",
+        "metrics_after": {
+          "ClothingInventoryManager.java": "not parsable (JavaSyntaxError)",
+          "ClothingInventoryManagerDataAccessor.java": "not parsable (JavaSyntaxError)",
+          "ClothingInventoryManagerDataMutator.java": "not parsable (JavaSyntaxError)"
+        }
+      },
+      {
+        "class_name": "InventoryManagementSystem",
+        "label": "MAJOR",
+        "produced_output": true,
+        "extracted_classes": 1,
+        "duplicate_class_names": 0,
+        "methods_moved": 3,
+        "methods_in_class": 28,
+        "files_written": [
+          "InventoryManagementSystem.java",
+          "InventoryManagementSystemDataMutator.java"
+        ],
+        "javac_errors": 70,
+        "message": "Successfully extracted 1 class(es)",
+        "metrics_after": {
+          "InventoryManagementSystem.java": "not parsable (JavaSyntaxError)",
+          "InventoryManagementSystemDataMutator.java": "not parsable (JavaSyntaxError)"
+        }
+      },
+      {
+        "class_name": "EnterpriseResourcePlanner",
+        "label": "CRITICAL",
+        "produced_output": false,
+        "extracted_classes": 0,
+        "duplicate_class_names": 0,
+        "methods_moved": 0,
+        "methods_in_class": 54,
+        "files_written": [],
+        "javac_errors": null,
+        "message": "No clear decomposition found - class may already be cohesive"
+      }
+    ],
+    "produced_output": "4/6",
+    "output_compiles": "0/4"
+  }
+}

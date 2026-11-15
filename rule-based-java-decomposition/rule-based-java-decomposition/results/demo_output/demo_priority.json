@@ -1,12 +1,12 @@
 {
-  "priority_score": 2.95,
+  "priority_score": 2.5,
   "priority_label": "HIGH",
   "recommendation": "Refactor when time permits",
   "is_god_class_candidate": true,
   "severity_counts": {
-    "low": 0,
+    "low": 1,
     "medium": 1,
-    "high": 3,
+    "high": 2,
     "critical": 1
   },
   "weights": {

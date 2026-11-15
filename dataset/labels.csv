@@ -1,0 +1,7 @@
+class_name,file,severity,label_source,note
+EmailValidator,EmailValidator.java,NONE,author,"Written by the author as the LOW example"
+OrderProcessor,OrderProcessor.java,MINOR,author,"Written by the author as the MEDIUM example"
+InventoryManagementSystem,InventoryManagementSystem.java,MAJOR,author,"Written by the author as the HIGH example"
+EnterpriseResourcePlanner,EnterpriseResourcePlanner.java,CRITICAL,author,"Written by the author as the CRITICAL example"
+UserService,UserService.java,MINOR,author,"Label from thesis Table 2. The original file header called this class 'a God Class that needs decomposition'; the label needs a second rater"
+ClothingInventoryManager,ClothingInventoryManager.java,MAJOR,author,"Label from thesis Table 2. The original file header called this class 'a God Class'"

@@ -1,59 +1,28 @@
-# ML-Based Java Class Decomposition
+# ML pipeline
 
-A machine learning tool for detecting and classifying God Class code smells in Java, based on state-of-the-art research (2023-2025).
-
-## Research Foundation
-
-| Paper | Method | Accuracy |
-|-------|--------|----------|
-| Rao et al. (2023) | PCA + SMOTE + Random Forest | 99% |
-| Dewangan et al. (2023) | Chi-square + XGBoost | 99.12% |
-| Khleel & Nehéz (2024) | Data balancing + Deep Learning | 97.8% |
-
-## Quick Start
+Classifies a Java class into NONE / MINOR / MAJOR / CRITICAL from seven metrics
+(LOC, SLOC, WMC, CBO, LCOM, NOM, NOA) with Random Forest, XGBoost, Gradient Boosting, an RBF SVM
+and a soft-voting ensemble of the three tree models.
 
 ```bash
-pip install -r requirements.txt --break-system-packages
-python run_pipeline.py --demo
+pip install -r requirements.txt
+python run_pipeline.py --demo                 # train, classify the classes in ../../dataset/blind
+python run_pipeline.py --demo --smote --pca   # with SMOTE oversampling and PCA (95% variance)
+python run_pipeline.py --demo --sample-dir /path/to/java/files
 ```
 
-## Features
+## What the numbers mean
 
-- **4-Level Severity**: NONE → MINOR → MAJOR → CRITICAL
-- **Multiple ML Models**: Random Forest, XGBoost, Gradient Boosting, Ensemble
-- **Data Balancing**: SMOTE for class imbalance
-- **Feature Selection**: PCA, Chi-square
-- **17+ Code Metrics**: LOC, WMC, CBO, LCOM, NOM, etc.
+The training data is synthetic. `generate_synthetic_training_data` in `src/models/ml_classifier.py`
+draws each sample from a hand-chosen range box for one severity level and labels it with that
+level. Hold-out accuracy (about 96-100%) therefore measures how well a model recovers those boxes.
+It is not an estimate of accuracy on real code, and feature importances describe the boxes, not
+God Classes. The ranges were adjusted during development while the six sample classes were being
+classified, so those classes are not an independent test set either.
 
-## Project Structure
+Metrics come from `common/java_metrics.py` at the repository root, the same extractor the
+rule-based pipeline uses. Seeds are fixed at 42. Results for the thesis are produced by
+`python evaluate.py` in the repository root.
 
-```
-ml-based-java-decomposition/
-├── run_pipeline.py              # Main entry point
-├── config.yaml                  # Configuration
-├── src/
-│   ├── feature_extraction/
-│   │   └── metric_extractor.py  # Extract code metrics
-│   ├── models/
-│   │   └── ml_classifier.py     # ML classifiers
-│   └── preprocessing/
-│       ├── data_balancer.py     # SMOTE balancing
-│       └── feature_selector.py  # PCA/Chi-square
-├── data/sample/                 # Sample Java files
-└── results/                     # Output files
-```
-
-## Pipeline Commands
-
-```bash
-python run_pipeline.py --demo        # Run demo
-python run_pipeline.py --all         # Full pipeline
-python run_pipeline.py --extract     # Extract metrics only
-python run_pipeline.py --train       # Train models only
-python run_pipeline.py --predict     # Predict only
-```
-
-## References
-
-1. Rao et al. (2023). Scientific Reports. DOI: 10.1038/s41598-023-43380-8
-2. Dewangan et al. (2023). SN Computer Science. DOI: 10.1007/s42979-023-01979-8
+To make this pipeline evidence about real code, replace the generator with labelled data, for
+example the Blob reviews in the MLCQ dataset, which use the same four severity levels.

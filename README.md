@@ -1,125 +1,110 @@
-# God Class Detection & Decomposition — Complete Project v2.1
+# God Class detection and decomposition: rule-based, ML and LLM approaches
 
-## BSc Thesis: Comparing Rule-Based, ML, and AI-Agent Approaches
-**Author:** Vo Gia Bach | **LUT University** | **2026** | **Examiner:** Jussi Kasurinen
+Code for the BSc thesis "A Comparative Literature Review and Empirical Analysis of Large Java
+File Decomposition Methods" (Vo Gia Bach, LUT University, 2026).
 
----
+Three ways of rating how badly a Java class suffers from the God Class smell
+(NONE / MINOR / MAJOR / CRITICAL), and of proposing an Extract Class decomposition, are compared on
+a small set of Java classes:
 
-## What This Project Does (Plain English)
-
-When software grows over years, some code files become too big and messy — doing hundreds of unrelated things in one place. Programmers call these "God Classes." They make software harder to fix and more likely to break.
-
-This project tests three ways to find messy files automatically: (1) simple rules that check if a file is too big, (2) machine learning that learns patterns from examples, and (3) AI chatbots that read the code and give advice. No single method works best everywhere, so the solution is to use all three together.
-
----
-
-## Quick Start
-
-```bash
-# Rule-based pipeline
-cd rule-based-java-decomposition
-pip install -r requirements.txt
-python run_pipeline_v2.py --demo
-
-# ML pipeline (v2.1)
-cd ../ml-based-java-decomposition
-pip install -r requirements.txt
-python run_pipeline_v2.py --demo
-
-# Scan an entire Java project
-python run_pipeline_v2.py --scan /path/to/java/project
-```
-
-## Prerequisites
-
-- Python 3.10+ (tested on 3.11)
-- Git (for cloning validation repos)
-- Java 17+ (optional — only needed for PMD in rule-based pipeline)
-- Docker (optional — for reproducible execution)
-
-## Installation
-
-```bash
-# Rule-Based (16 tests)
-cd rule-based-java-decomposition
-pip install -r requirements.txt
-pytest tests/ -v
-
-# ML (27 tests)
-cd ../ml-based-java-decomposition
-pip install -r requirements.txt
-pytest tests/ -v
-```
-
-## ML Pipeline v2.1 — 10-Step Process
-
-| Step | Name | What happens |
+| Approach | What it does | Where |
 |---|---|---|
-| 1 | Metric Extraction | AST-based parsing → 11 features (8 base + 3 derived) |
-| 2 | Data Preprocessing | 2000 correlated synthetic samples, SMOTE, PCA |
-| 3 | Model Training | RF, XGBoost, GB, SVM + stacking ensemble + Platt calibration |
-| 4 | Classification | Classify files with calibrated confidence scores |
-| 5 | Feature Importance | Random Forest importance rankings |
-| 6 | Visualization | 6 thesis-quality figures |
-| 7 | Save Results | JSON exports of all metrics, predictions, models |
-| 8 | **Decomposition** | ML-informed decomposition plans + Extract Class code generation |
-| 9 | **Dashboard** | 6 model comparison figures (confusion, calibration, radar) |
-| 10 | **Sensitivity** | Threshold perturbation analysis with thesis-ready text |
+| Rule-based | Thresholds on five metrics, weighted into a priority score; groups methods by shared fields and writes extracted classes | `rule-based-java-decomposition/` |
+| Machine learning | Random Forest, XGBoost, Gradient Boosting, SVM and a voting ensemble trained on synthetic metric vectors | `ml-based-java-decomposition/` |
+| LLM | One prompt per class, repeated trials, JSON answer scored against the parsed source | `llm-evaluation/` |
 
-## Project Structure
+## Scope and limits (read this first)
 
-```
-rule-based-java-decomposition/          ~6,200 lines, 22 modules
-  src/analyzer/                         Rule evaluation + priority scoring
-  src/decomposer/                       Extract Class code generation
-  src/metrics/                          AST + regex metric extraction
+- The evaluation set is **six Java classes written and labelled by the author**. The counts below
+  are a sanity check of the pipelines, not an estimate of accuracy on real projects.
+- The ML models are trained and tested on **synthetic data whose labels come from hand-chosen
+  metric ranges**. Near-100% hold-out accuracy shows the models recover those ranges; it says
+  nothing about real code.
+- The rule-based decomposer writes a draft only. **None of its output compiles yet.**
+- No result on an established benchmark (for example MLCQ) is included. That is the main piece
+  of future work.
 
-ml-based-java-decomposition/            ~5,400 lines, 27 modules
-  src/feature_extraction/               AST + regex metric extraction
-  src/models/                           Stacking classifier + calibration
-  src/preprocessing/                    SMOTE + PCA
-  src/evaluation/                       Statistical eval + sensitivity analysis
-  src/decomposer/                       ML decomposition recommender (NEW)
-  src/scanner/                          Batch repository scanner (NEW)
-  src/visualization/                    Charts + model dashboard (NEW)
-```
+## Current results
 
-## ML v2.1 New Features
+Regenerated by `python evaluate.py`; full tables in [`results/evaluation.md`](results/evaluation.md).
 
-- **ML Decomposer** (~850 lines): Root cause analysis, responsibility clustering, Extract Class code generation
-- **Repository Scanner** (~385 lines): Batch scan projects with confidence-prioritized reporting
-- **Model Dashboard** (~355 lines): Confusion matrices, calibration curves, radar chart
-- **Sensitivity Analysis** (~280 lines): Threshold perturbation ±30%, stability assessment
-- **Docker Config**: Dockerfile + docker-compose matching rule-based project
-- **Stacking Ensemble**: Replaces simple voting with meta-learner
-- **Platt Calibration**: Meaningful confidence scores
-- **Derived Features**: method_density, avg_method_size, fields_per_method
+| Measure | Rule-based | ML ensemble |
+|---|---|---|
+| Severity agrees with the author's label | 5/6 (95% CI 0.44-0.97) | 5/6 (95% CI 0.44-0.97) |
+| God Class yes/no agrees | 5/6 | 6/6 |
+| Hold-out accuracy on synthetic data | not applicable | 99.75% |
+| Median time per class | 0.04 s | 0.10 s (plus 37 s to train once) |
+| Extract Class output produced | 4/6 classes | not implemented |
+| Extract Class output compiles | 0/4 | not implemented |
 
-## Scanning a Java Repository
+The LLM evaluation has to be run by you (it needs API keys); see `llm-evaluation/README.md`.
+The January 2026 manual LLM trial is kept only as a scored legacy record: in the one fully
+recorded recommendation for the largest class, 15 of the 67 method names the model listed exist
+in the class (`python llm-evaluation/score.py --legacy`).
+
+## Reproduce
+
+Python 3.10+ and, for the compile check, a JDK on the PATH.
 
 ```bash
-python run_pipeline_v2.py --scan /path/to/java/project
-# Results: results/scan_results.csv and scan_results.json
+pip install -r requirements.txt
+python dataset/make_blind_dataset.py     # rebuild the evaluation copies of the six classes
+python evaluate.py                       # about five minutes; writes results/evaluation.{md,json}
+python -m pytest tests -q                # 11 tests
+python -m pytest rule-based-java-decomposition/rule-based-java-decomposition/tests -q   # 10 tests
 ```
 
-## Analyzing New Files
+Seeds are fixed (42) for data generation, the train/test split and every model.
+
+Each pipeline can also be run on its own from its folder:
 
 ```bash
-cp YourClass.java ml-based-java-decomposition/data/sample/
-cd ml-based-java-decomposition && python run_pipeline_v2.py --demo
+cd rule-based-java-decomposition/rule-based-java-decomposition && python run_pipeline.py --demo
+cd ml-based-java-decomposition/ml-based-java-decomposition && python run_pipeline.py --demo [--smote] [--pca]
 ```
 
-## Common Errors
+## Layout
 
-| Error | Fix |
-|---|---|
-| ModuleNotFoundError: javalang | pip install javalang (falls back to regex) |
-| ModuleNotFoundError: xgboost | pip install xgboost (uses 3 models without it) |
-| Java/PMD not found | Optional — use Docker for full setup |
-| AST parsing failed | Normal — automatic regex fallback |
+```
+common/java_metrics.py        one metric extractor (javalang syntax tree) used by everything
+dataset/
+  make_blind_dataset.py       strips answer-revealing comments, renames files so they compile
+  blind/                      the six evaluation classes
+  labels.csv                  severity labels and where each label comes from
+evaluate.py                   regenerates every reported rule-based and ML number
+results/                      evaluation.md, evaluation.json, decomposition/ (generated)
+rule-based-java-decomposition/rule-based-java-decomposition/
+  src/analyzer/priority_scorer.py   thresholds, weights, score bins
+  src/decomposer/decomposer.py      method grouping and Extract Class draft
+ml-based-java-decomposition/ml-based-java-decomposition/
+  src/models/ml_classifier.py       models, synthetic data generator
+llm-evaluation/               prompt, providers, runner, scorer, legacy record
+tests/                        tests for the shared code
+```
 
-## Manual Tasks Still Required
+## Metric definitions
 
-1. **Inter-Rater Reliability**: Send evaluation_package/ to classmate, run task3_inter_rater.py
-2. **Multi-Trial AI Evaluation**: Run task2_ai_agent_eval.py with API keys (~$3.75)
-3. **Page Count Check**: Verify "46 pages" in both abstracts matches actual page count
+All metrics except LOC and SLOC refer to the primary (public) class of a file; helper classes in
+the same file are not counted. LOC is physical lines of the file; NOM excludes constructors; WMC
+is the sum of method cyclomatic complexities; CBO counts distinct non-JDK class types referred to
+(JDK types are removed by name, so it is an approximation); LCOM is the share of method pairs that
+use no common field. Details are in the docstring of `common/java_metrics.py`.
+
+## Changes in November 2026
+
+An audit of the first version found that several reported numbers could not be reproduced. What
+changed, and why, is recorded here so earlier results can be interpreted:
+
+- The test files stated their own expected severity, metrics and (in one case) a suggested
+  decomposition in comments. Evaluation now uses `dataset/blind/`.
+- Two regex extractors gave different metrics for the same file and counted helper-class methods.
+  Both pipelines now use `common/java_metrics.py`. NOM for the largest class went from 77 to 54.
+- The priority-score bins made the LOW label unreachable (the minimum score is 1.0). Labels are
+  now assigned to the nearest level; `evaluate.py` reports both variants (5/6 and 4/6).
+- SMOTE and PCA were described but never executed. They are now real options (`--smote`, `--pca`)
+  and are covered by an ablation; on the synthetic data they make no measurable difference.
+- The `cyclomatic` feature duplicated WMC on real files and was removed (seven features remain).
+  Cross-validation now uses the training split only.
+- Precision/recall figures for five open-source repositories (72% / 82%) had no data behind them
+  and were removed, together with a placeholder `code_metrics.csv`.
+- Documentation describing files that did not exist was replaced.

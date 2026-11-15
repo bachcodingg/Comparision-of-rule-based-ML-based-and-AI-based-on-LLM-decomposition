@@ -122,11 +122,12 @@ class TestRuleAnalyzer:
         
         analyzer = RuleBasedAnalyzer(config)
         
-        assert analyzer._map_pmd_priority(1) == "severe"
-        assert analyzer._map_pmd_priority(2) == "severe"
-        assert analyzer._map_pmd_priority(3) == "critical"
-        assert analyzer._map_pmd_priority(4) == "warning"
-        assert analyzer._map_pmd_priority(5) == "warning"
+        # PMD priority 1-5 maps onto the 4-level severity scale
+        assert analyzer._map_pmd_priority(1) == "critical"
+        assert analyzer._map_pmd_priority(2) == "high"
+        assert analyzer._map_pmd_priority(3) == "medium"
+        assert analyzer._map_pmd_priority(4) == "low"
+        assert analyzer._map_pmd_priority(5) == "low"
 
 
 class TestThresholds:
@@ -195,6 +196,50 @@ class TestEvaluation:
         
         f1 = 2 * precision * recall / (precision + recall)
         assert f1 == 0.5
+
+
+class TestMetricExtractorCommentHandling:
+    """Comments and string literals must not influence extracted metrics."""
+
+    CONFIG = {"data": {"raw_dir": "data/raw", "processed_dir": "data/processed",
+                       "repositories": []}}
+
+    SOURCE = """package demo;
+
+/**
+ * Simple utility class with minimal complexity.
+ * Mentions Database, Network and Scheduler, none of which are used.
+ */
+public class Sample {
+    private int count;  // class counter, see Helper
+    private String label = "class Fake extends Other";
+
+    public int next() {
+        if (count > 10) { count = 0; }
+        return count++;
+    }
+}
+"""
+
+    def _extract(self, tmp_path):
+        from metrics.metric_extractor import MetricExtractor
+        java_file = tmp_path / "Sample.java"
+        java_file.write_text(self.SOURCE, encoding="utf-8")
+        config = dict(self.CONFIG)
+        config["data"] = dict(config["data"], processed_dir=str(tmp_path / "processed"))
+        return MetricExtractor(config).extract_metrics_from_file(java_file)
+
+    def test_class_name_is_not_taken_from_comment(self, tmp_path):
+        assert self._extract(tmp_path)["class_name"] == "Sample"
+
+    def test_types_named_only_in_comments_or_strings_do_not_count_as_coupling(self, tmp_path):
+        assert self._extract(tmp_path)["cbo"] == 0
+
+    def test_strip_keeps_line_count(self):
+        from metrics.metric_extractor import MetricExtractor
+        stripped = MetricExtractor.strip_comments_and_strings(self.SOURCE)
+        assert len(stripped.splitlines()) == len(self.SOURCE.splitlines())
+        assert "Database" not in stripped and "Fake" not in stripped
 
 
 if __name__ == "__main__":
