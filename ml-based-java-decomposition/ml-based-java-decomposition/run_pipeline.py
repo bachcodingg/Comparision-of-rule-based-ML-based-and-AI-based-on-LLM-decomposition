@@ -27,19 +27,25 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
 from feature_extraction.metric_extractor import MetricExtractor
-from models.ml_classifier import SeverityClassifier, generate_synthetic_training_data
+from models.ml_classifier import FEATURES, SeverityClassifier, generate_synthetic_training_data
 
 
 def setup_logging(config: dict) -> logging.Logger:
     """Configure logging."""
     log_dir = Path("logs")
     log_dir.mkdir(exist_ok=True)
+
+    # Log lines contain non-ASCII symbols; a legacy Windows console (cp1252)
+    # cannot encode them and logging would raise UnicodeEncodeError.
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
     
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(levelname)s - %(message)s",
         handlers=[
-            logging.FileHandler("logs/ml_analysis.log"),
+            logging.FileHandler("logs/ml_analysis.log", encoding="utf-8"),
             logging.StreamHandler()
         ]
     )
@@ -53,12 +59,12 @@ def load_config(config_path: str = "config.yaml") -> dict:
             return yaml.safe_load(f)
     except:
         return {
-            "data": {"sample_dir": "data/sample", "processed_dir": "data/processed"},
+            "data": {"sample_dir": "../../dataset/blind", "processed_dir": "data/processed"},
             "output": {"results_dir": "results", "models_dir": "results/models"}
         }
 
 
-def run_demo(config: dict, logger: logging.Logger):
+def run_demo(config: dict, logger: logging.Logger, use_smote: bool = False, use_pca: bool = False):
     """Run complete demo on sample files."""
     logger.info("=" * 70)
     logger.info("ML-BASED GOD CLASS DETECTION - DEMO")
@@ -69,7 +75,7 @@ def run_demo(config: dict, logger: logging.Logger):
     logger.info("  • Khleel & Nehéz (2024) - Data balancing techniques")
     logger.info("=" * 70)
     
-    sample_dir = Path(config.get("data", {}).get("sample_dir", "data/sample"))
+    sample_dir = Path(config.get("data", {}).get("sample_dir", "../../dataset/blind"))
     if not sample_dir.exists() or not list(sample_dir.glob("*.java")):
         logger.error(f"No Java files in {sample_dir}")
         return
@@ -92,7 +98,6 @@ def run_demo(config: dict, logger: logging.Logger):
             logger.info(f"  WMC:        {metrics.wmc}")
             logger.info(f"  CBO:        {metrics.cbo}")
             logger.info(f"  LCOM:       {metrics.lcom:.4f}")
-            logger.info(f"  Cyclomatic: {metrics.cyclomatic}")
     
     if not metrics_list:
         logger.error("No metrics extracted!")
@@ -105,9 +110,10 @@ def run_demo(config: dict, logger: logging.Logger):
     
     logger.info("Generating synthetic training data (2000 samples)...")
     X_train, y_train = generate_synthetic_training_data(n_samples=2000)
-    feature_names = ['loc', 'sloc', 'wmc', 'cyclomatic', 'cbo', 'lcom', 'nom', 'noa']
+    feature_names = FEATURES
     
-    classifier = SeverityClassifier(config)
+    classifier = SeverityClassifier(config, use_smote=use_smote, use_pca=use_pca)
+    logger.info(f"Preprocessing: SMOTE={'on' if use_smote else 'off'}, PCA={'on' if use_pca else 'off'}")
     performances = classifier.train(X_train, y_train, feature_names)
     
     best = max(performances.items(), key=lambda x: x[1].f1_score)
@@ -126,7 +132,7 @@ def run_demo(config: dict, logger: logging.Logger):
     for metrics in metrics_list:
         features = {
             'loc': metrics.loc, 'sloc': metrics.sloc, 'wmc': metrics.wmc,
-            'cyclomatic': metrics.cyclomatic, 'cbo': metrics.cbo,
+            'cbo': metrics.cbo,
             'lcom': metrics.lcom, 'nom': metrics.nom, 'noa': metrics.noa,
             'class_name': metrics.class_name, 'file_path': metrics.file_path
         }
@@ -205,16 +211,16 @@ def run_extract(config: dict, logger: logging.Logger) -> pd.DataFrame:
     return metrics_df
 
 
-def run_train(config: dict, logger: logging.Logger):
+def run_train(config: dict, logger: logging.Logger, use_smote: bool = False, use_pca: bool = False):
     """Train ML models."""
     logger.info("=" * 70)
     logger.info("PHASE 2: MODEL TRAINING")
     logger.info("=" * 70)
     
     X, y = generate_synthetic_training_data(n_samples=2000)
-    feature_names = ['loc', 'sloc', 'wmc', 'cyclomatic', 'cbo', 'lcom', 'nom', 'noa']
+    feature_names = FEATURES
     
-    classifier = SeverityClassifier(config)
+    classifier = SeverityClassifier(config, use_smote=use_smote, use_pca=use_pca)
     performances = classifier.train(X, y, feature_names)
     
     for name, perf in performances.items():
@@ -273,9 +279,17 @@ def main():
     parser.add_argument("--train", action="store_true", help="Train models")
     parser.add_argument("--predict", action="store_true", help="Run predictions")
     parser.add_argument("--config", default="config.yaml", help="Config file")
+    parser.add_argument("--smote", action="store_true",
+                        help="Oversample the training split with SMOTE (off by default)")
+    parser.add_argument("--pca", action="store_true",
+                        help="Standardise and reduce features with PCA, 95%% variance (off by default)")
+    parser.add_argument("--sample-dir", default=None,
+                        help="Directory of Java files to classify (overrides config data.sample_dir)")
     
     args = parser.parse_args()
     config = load_config(args.config)
+    if args.sample_dir:
+        config.setdefault("data", {})["sample_dir"] = args.sample_dir
     logger = setup_logging(config)
     
     logger.info("=" * 70)
@@ -285,15 +299,15 @@ def main():
     
     try:
         if args.demo:
-            run_demo(config, logger)
+            run_demo(config, logger, args.smote, args.pca)
         elif args.all:
             run_extract(config, logger)
-            run_train(config, logger)
+            run_train(config, logger, args.smote, args.pca)
             run_predict(config, logger)
         elif args.extract:
             run_extract(config, logger)
         elif args.train:
-            run_train(config, logger)
+            run_train(config, logger, args.smote, args.pca)
         elif args.predict:
             run_predict(config, logger)
         else:

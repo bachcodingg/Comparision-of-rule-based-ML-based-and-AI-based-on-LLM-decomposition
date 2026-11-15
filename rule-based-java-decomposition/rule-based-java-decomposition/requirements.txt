@@ -13,8 +13,8 @@ seaborn>=0.12.0
 # Report generation
 jinja2>=3.1.0
 
-# Optional: for enhanced metric extraction
-# javalang>=0.13.0  # Java parser (optional)
+# Java parser used by common/java_metrics.py
+javalang>=0.13.0
 
 # Development dependencies
 pytest>=7.3.0

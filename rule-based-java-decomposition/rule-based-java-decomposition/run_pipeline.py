@@ -53,12 +53,18 @@ def setup_logging(config: dict) -> logging.Logger:
     
     log_dir = Path("logs")
     log_dir.mkdir(exist_ok=True)
+
+    # Log lines contain non-ASCII symbols; a legacy Windows console (cp1252)
+    # cannot encode them and logging would raise UnicodeEncodeError.
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
     
     logging.basicConfig(
         level=getattr(logging, log_config.get("level", "INFO")),
         format=log_config.get("format", "%(asctime)s - %(levelname)s - %(message)s"),
         handlers=[
-            logging.FileHandler(log_config.get("file", "logs/analysis.log")),
+            logging.FileHandler(log_config.get("file", "logs/analysis.log"), encoding="utf-8"),
             logging.StreamHandler()
         ]
     )
@@ -207,10 +213,15 @@ def run_decomposition(config: dict, logger: logging.Logger) -> None:
         logger.info(f"Decomposing: {class_name}")
         
         try:
-            suggestions = decompose_java_file(file_path, config)
-            if suggestions:
+            # The second argument is the output directory. It used to receive
+            # the config dict, so this phase never wrote any file.
+            out_dir = Path(config.get("output", {}).get("results_dir", "results")) / "decomposition" / class_name
+            result = decompose_java_file(file_path, str(out_dir))
+            if result.success:
                 decomposed_count += 1
-                logger.info(f"  -> Suggested {len(suggestions)} extracted classes")
+                logger.info(f"  -> Extracted {len(result.extracted_classes)} class(es) into {out_dir}")
+            else:
+                logger.info(f"  -> {result.message}")
         except Exception as e:
             logger.error(f"  -> Error: {e}")
     
@@ -279,10 +290,10 @@ def run_demo(config: dict, logger: logging.Logger) -> None:
     logger.info("=" * 70)
     
     # Check for sample file
-    sample_file = Path("data/sample/UserService.java")
+    sample_file = Path(__file__).resolve().parent.parent.parent / "dataset" / "blind" / "UserService.java"
     if not sample_file.exists():
         logger.error(f"Sample file not found: {sample_file}")
-        logger.error("Please create a sample Java file in data/sample/")
+        logger.error("Run: python dataset/make_blind_dataset.py")
         return
     
     logger.info(f"Loading sample file: {sample_file}")

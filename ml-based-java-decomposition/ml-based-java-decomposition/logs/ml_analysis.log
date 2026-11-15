@@ -599,3 +599,303 @@ Files analyzed: 6
 2026-02-09 17:53:16,361 - INFO - 
 God Classes detected: 3/6
 2026-02-09 17:53:16,361 - INFO - Best model accuracy: 100.00%
+2026-11-14 17:15:58,650 - INFO - ======================================================================
+2026-11-14 17:15:58,651 - INFO - ML-Based Java Class Decomposition Tool v1.0
+2026-11-14 17:15:58,651 - INFO - Research-Based Implementation (2023-2025)
+2026-11-14 17:15:58,651 - INFO - ======================================================================
+2026-11-14 17:15:58,651 - ERROR - Error: run_demo() takes 2 positional arguments but 4 were given
+Traceback (most recent call last):
+  File "D:\TUM\Thesis\last work\ml-based-java-decomposition\ml-based-java-decomposition\run_pipeline.py", line 302, in main
+    run_demo(config, logger, args.smote, args.pca)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: run_demo() takes 2 positional arguments but 4 were given
+2026-11-14 17:16:09,377 - INFO - ======================================================================
+2026-11-14 17:16:09,377 - INFO - ML-Based Java Class Decomposition Tool v1.0
+2026-11-14 17:16:09,377 - INFO - Research-Based Implementation (2023-2025)
+2026-11-14 17:16:09,377 - INFO - ======================================================================
+2026-11-14 17:16:09,377 - INFO - ======================================================================
+2026-11-14 17:16:09,377 - INFO - ML-BASED GOD CLASS DETECTION - DEMO
+2026-11-14 17:16:09,377 - INFO - ======================================================================
+2026-11-14 17:16:09,377 - INFO - 
+Research Foundation:
+2026-11-14 17:16:09,377 - INFO -   • Rao et al. (2023) - PCA + SMOTE + Random Forest
+2026-11-14 17:16:09,377 - INFO -   • Dewangan et al. (2023) - 4-level severity classification
+2026-11-14 17:16:09,377 - INFO -   • Khleel & Nehéz (2024) - Data balancing techniques
+2026-11-14 17:16:09,378 - INFO - ======================================================================
+2026-11-14 17:16:09,378 - INFO - 
+======================================================================
+2026-11-14 17:16:09,378 - INFO - Step 1: Extracting Code Metrics
+2026-11-14 17:16:09,378 - INFO - ======================================================================
+2026-11-14 17:16:09,398 - INFO - 
+ClothingInventoryManager:
+2026-11-14 17:16:09,398 - INFO -   LOC:        456
+2026-11-14 17:16:09,398 - INFO -   NOM:        48
+2026-11-14 17:16:09,398 - INFO -   WMC:        72
+2026-11-14 17:16:09,398 - INFO -   CBO:        3
+2026-11-14 17:16:09,398 - INFO -   LCOM:       0.9317
+2026-11-14 17:16:09,400 - INFO - 
+EmailValidator:
+2026-11-14 17:16:09,400 - INFO -   LOC:        83
+2026-11-14 17:16:09,400 - INFO -   NOM:        5
+2026-11-14 17:16:09,400 - INFO -   WMC:        13
+2026-11-14 17:16:09,400 - INFO -   CBO:        0
+2026-11-14 17:16:09,400 - INFO -   LCOM:       0.7000
+2026-11-14 17:16:09,433 - INFO - 
+EnterpriseResourcePlanner:
+2026-11-14 17:16:09,433 - INFO -   LOC:        1002
+2026-11-14 17:16:09,433 - INFO -   NOM:        54
+2026-11-14 17:16:09,433 - INFO -   WMC:        126
+2026-11-14 17:16:09,433 - INFO -   CBO:        15
+2026-11-14 17:16:09,433 - INFO -   LCOM:       0.8512
+2026-11-14 17:16:09,450 - INFO - 
+InventoryManagementSystem:
+2026-11-14 17:16:09,450 - INFO -   LOC:        576
+2026-11-14 17:16:09,450 - INFO -   NOM:        28
+2026-11-14 17:16:09,450 - INFO -   WMC:        82
+2026-11-14 17:16:09,450 - INFO -   CBO:        5
+2026-11-14 17:16:09,451 - INFO -   LCOM:       0.7619
+2026-11-14 17:16:09,457 - INFO - 
+OrderProcessor:
+2026-11-14 17:16:09,457 - INFO -   LOC:        271
+2026-11-14 17:16:09,457 - INFO -   NOM:        15
+2026-11-14 17:16:09,457 - INFO -   WMC:        38
+2026-11-14 17:16:09,457 - INFO -   CBO:        2
+2026-11-14 17:16:09,457 - INFO -   LCOM:       0.7714
+2026-11-14 17:16:09,467 - INFO - 
+UserService:
+2026-11-14 17:16:09,467 - INFO -   LOC:        306
+2026-11-14 17:16:09,467 - INFO -   NOM:        40
+2026-11-14 17:16:09,467 - INFO -   WMC:        70
+2026-11-14 17:16:09,467 - INFO -   CBO:        0
+2026-11-14 17:16:09,467 - INFO -   LCOM:       0.9410
+2026-11-14 17:16:09,467 - INFO - 
+======================================================================
+2026-11-14 17:16:09,468 - INFO - Step 2: Training ML Model
+2026-11-14 17:16:09,468 - INFO - ======================================================================
+2026-11-14 17:16:09,468 - INFO - Generating synthetic training data (2000 samples)...
+2026-11-14 17:16:09,525 - INFO - Preprocessing: SMOTE=off, PCA=off
+2026-11-14 17:16:09,526 - INFO - Training random_forest...
+2026-11-14 17:16:10,346 - INFO - Training xgboost...
+2026-11-14 17:16:14,309 - INFO - Training gradient_boosting...
+2026-11-14 17:16:26,201 - INFO - Training svm...
+2026-11-14 17:16:45,005 - INFO - 
+Best model: random_forest (F1=1.0000)
+2026-11-14 17:16:45,005 - INFO -   random_forest: Acc=1.0000, F1=1.0000, CV=1.0000±0.0000
+2026-11-14 17:16:45,005 - INFO -   xgboost: Acc=0.9975, F1=0.9975, CV=0.9994±0.0013
+2026-11-14 17:16:45,006 - INFO -   gradient_boosting: Acc=0.9975, F1=0.9975, CV=0.9944±0.0070
+2026-11-14 17:16:45,006 - INFO -   svm: Acc=0.9600, F1=0.9600, CV=0.9599±0.0080
+2026-11-14 17:16:45,006 - INFO -   ensemble: Acc=0.9975, F1=0.9975, CV=1.0000±0.0000
+2026-11-14 17:16:45,006 - INFO - 
+======================================================================
+2026-11-14 17:16:45,006 - INFO - Step 3: Classifying Sample Files
+2026-11-14 17:16:45,006 - INFO - ======================================================================
+2026-11-14 17:16:45,097 - INFO - 
+🔴 ClothingInventoryManager:
+2026-11-14 17:16:45,097 - INFO -    Severity:     CRITICAL
+2026-11-14 17:16:45,097 - INFO -    Confidence:   51.5%
+2026-11-14 17:16:45,097 - INFO -    God Class:    YES
+2026-11-14 17:16:45,097 - INFO -    Recommendation: URGENT: Immediate decomposition required. This is a severe God Class.
+2026-11-14 17:16:45,190 - INFO - 
+🟢 EmailValidator:
+2026-11-14 17:16:45,190 - INFO -    Severity:     NONE
+2026-11-14 17:16:45,190 - INFO -    Confidence:   94.0%
+2026-11-14 17:16:45,190 - INFO -    God Class:    NO
+2026-11-14 17:16:45,190 - INFO -    Recommendation: No action required. Class is well-designed.
+2026-11-14 17:16:45,296 - INFO - 
+🔴 EnterpriseResourcePlanner:
+2026-11-14 17:16:45,297 - INFO -    Severity:     CRITICAL
+2026-11-14 17:16:45,297 - INFO -    Confidence:   79.2%
+2026-11-14 17:16:45,297 - INFO -    God Class:    YES
+2026-11-14 17:16:45,297 - INFO -    Recommendation: URGENT: Immediate decomposition required. This is a severe God Class.
+2026-11-14 17:16:45,386 - INFO - 
+🟠 InventoryManagementSystem:
+2026-11-14 17:16:45,386 - INFO -    Severity:     MAJOR
+2026-11-14 17:16:45,387 - INFO -    Confidence:   56.0%
+2026-11-14 17:16:45,387 - INFO -    God Class:    YES
+2026-11-14 17:16:45,387 - INFO -    Recommendation: Schedule refactoring. This class shows signs of becoming a God Class.
+2026-11-14 17:16:45,466 - INFO - 
+🟡 OrderProcessor:
+2026-11-14 17:16:45,466 - INFO -    Severity:     MINOR
+2026-11-14 17:16:45,467 - INFO -    Confidence:   88.6%
+2026-11-14 17:16:45,467 - INFO -    God Class:    NO
+2026-11-14 17:16:45,467 - INFO -    Recommendation: Monitor for growth. Consider refactoring if metrics increase.
+2026-11-14 17:16:45,550 - INFO - 
+🟡 UserService:
+2026-11-14 17:16:45,550 - INFO -    Severity:     MINOR
+2026-11-14 17:16:45,550 - INFO -    Confidence:   53.3%
+2026-11-14 17:16:45,550 - INFO -    God Class:    NO
+2026-11-14 17:16:45,551 - INFO -    Recommendation: Monitor for growth. Consider refactoring if metrics increase.
+2026-11-14 17:16:45,551 - INFO - 
+======================================================================
+2026-11-14 17:16:45,551 - INFO - Step 4: Feature Importance Analysis
+2026-11-14 17:16:45,551 - INFO - ======================================================================
+2026-11-14 17:16:45,642 - INFO -   sloc           : 0.2860 ███████████
+2026-11-14 17:16:45,642 - INFO -   loc            : 0.2129 ████████
+2026-11-14 17:16:45,642 - INFO -   wmc            : 0.1419 █████
+2026-11-14 17:16:45,642 - INFO -   noa            : 0.1415 █████
+2026-11-14 17:16:45,642 - INFO -   nom            : 0.0908 ███
+2026-11-14 17:16:45,642 - INFO -   cbo            : 0.0870 ███
+2026-11-14 17:16:45,643 - INFO -   lcom           : 0.0399 █
+2026-11-14 17:16:45,643 - INFO - 
+======================================================================
+2026-11-14 17:16:45,643 - INFO - Step 5: Saving Results
+2026-11-14 17:16:45,643 - INFO - ======================================================================
+2026-11-14 17:16:45,692 - INFO - Results saved to: results\demo_output
+2026-11-14 17:16:45,692 - INFO - 
+======================================================================
+2026-11-14 17:16:45,692 - INFO - DEMO COMPLETE - SUMMARY
+2026-11-14 17:16:45,692 - INFO - ======================================================================
+2026-11-14 17:16:45,692 - INFO - 
+Files analyzed: 6
+2026-11-14 17:16:45,692 - INFO -   NONE: 1
+2026-11-14 17:16:45,693 - INFO -   MINOR: 2
+2026-11-14 17:16:45,693 - INFO -   MAJOR: 1
+2026-11-14 17:16:45,693 - INFO -   CRITICAL: 2
+2026-11-14 17:16:45,693 - INFO - 
+God Classes detected: 3/6
+2026-11-14 17:16:45,693 - INFO - Best model accuracy: 100.00%
+2026-11-14 22:12:53,274 - INFO - ======================================================================
+2026-11-14 22:12:53,275 - INFO - ML-Based Java Class Decomposition Tool v1.0
+2026-11-14 22:12:53,275 - INFO - Research-Based Implementation (2023-2025)
+2026-11-14 22:12:53,275 - INFO - ======================================================================
+2026-11-14 22:12:53,275 - INFO - ======================================================================
+2026-11-14 22:12:53,275 - INFO - ML-BASED GOD CLASS DETECTION - DEMO
+2026-11-14 22:12:53,275 - INFO - ======================================================================
+2026-11-14 22:12:53,275 - INFO - 
+Research Foundation:
+2026-11-14 22:12:53,275 - INFO -   • Rao et al. (2023) - PCA + SMOTE + Random Forest
+2026-11-14 22:12:53,275 - INFO -   • Dewangan et al. (2023) - 4-level severity classification
+2026-11-14 22:12:53,275 - INFO -   • Khleel & Nehéz (2024) - Data balancing techniques
+2026-11-14 22:12:53,275 - INFO - ======================================================================
+2026-11-14 22:12:53,276 - INFO - 
+======================================================================
+2026-11-14 22:12:53,276 - INFO - Step 1: Extracting Code Metrics
+2026-11-14 22:12:53,276 - INFO - ======================================================================
+2026-11-14 22:12:53,294 - INFO - 
+ClothingInventoryManager:
+2026-11-14 22:12:53,294 - INFO -   LOC:        456
+2026-11-14 22:12:53,294 - INFO -   NOM:        48
+2026-11-14 22:12:53,294 - INFO -   WMC:        72
+2026-11-14 22:12:53,294 - INFO -   CBO:        3
+2026-11-14 22:12:53,294 - INFO -   LCOM:       0.9317
+2026-11-14 22:12:53,296 - INFO - 
+EmailValidator:
+2026-11-14 22:12:53,296 - INFO -   LOC:        83
+2026-11-14 22:12:53,296 - INFO -   NOM:        5
+2026-11-14 22:12:53,297 - INFO -   WMC:        13
+2026-11-14 22:12:53,297 - INFO -   CBO:        0
+2026-11-14 22:12:53,297 - INFO -   LCOM:       0.7000
+2026-11-14 22:12:53,330 - INFO - 
+EnterpriseResourcePlanner:
+2026-11-14 22:12:53,330 - INFO -   LOC:        1002
+2026-11-14 22:12:53,330 - INFO -   NOM:        54
+2026-11-14 22:12:53,330 - INFO -   WMC:        126
+2026-11-14 22:12:53,330 - INFO -   CBO:        15
+2026-11-14 22:12:53,330 - INFO -   LCOM:       0.8512
+2026-11-14 22:12:53,348 - INFO - 
+InventoryManagementSystem:
+2026-11-14 22:12:53,348 - INFO -   LOC:        576
+2026-11-14 22:12:53,348 - INFO -   NOM:        28
+2026-11-14 22:12:53,348 - INFO -   WMC:        82
+2026-11-14 22:12:53,348 - INFO -   CBO:        5
+2026-11-14 22:12:53,348 - INFO -   LCOM:       0.7619
+2026-11-14 22:12:53,355 - INFO - 
+OrderProcessor:
+2026-11-14 22:12:53,355 - INFO -   LOC:        271
+2026-11-14 22:12:53,355 - INFO -   NOM:        15
+2026-11-14 22:12:53,355 - INFO -   WMC:        38
+2026-11-14 22:12:53,355 - INFO -   CBO:        2
+2026-11-14 22:12:53,355 - INFO -   LCOM:       0.7714
+2026-11-14 22:12:53,365 - INFO - 
+UserService:
+2026-11-14 22:12:53,365 - INFO -   LOC:        306
+2026-11-14 22:12:53,365 - INFO -   NOM:        40
+2026-11-14 22:12:53,365 - INFO -   WMC:        70
+2026-11-14 22:12:53,365 - INFO -   CBO:        0
+2026-11-14 22:12:53,365 - INFO -   LCOM:       0.9410
+2026-11-14 22:12:53,365 - INFO - 
+======================================================================
+2026-11-14 22:12:53,365 - INFO - Step 2: Training ML Model
+2026-11-14 22:12:53,365 - INFO - ======================================================================
+2026-11-14 22:12:53,365 - INFO - Generating synthetic training data (2000 samples)...
+2026-11-14 22:12:53,413 - INFO - Preprocessing: SMOTE=off, PCA=off
+2026-11-14 22:12:53,416 - INFO - Training random_forest...
+2026-11-14 22:12:55,348 - INFO - Training xgboost...
+2026-11-14 22:12:59,066 - INFO - Training gradient_boosting...
+2026-11-14 22:13:11,885 - INFO - Training svm...
+2026-11-14 22:13:31,660 - INFO - 
+Best model: random_forest (F1=1.0000)
+2026-11-14 22:13:31,660 - INFO -   random_forest: Acc=1.0000, F1=1.0000, CV=1.0000±0.0000
+2026-11-14 22:13:31,661 - INFO -   xgboost: Acc=0.9975, F1=0.9975, CV=0.9994±0.0013
+2026-11-14 22:13:31,661 - INFO -   gradient_boosting: Acc=0.9975, F1=0.9975, CV=0.9944±0.0070
+2026-11-14 22:13:31,661 - INFO -   svm: Acc=0.9600, F1=0.9600, CV=0.9599±0.0080
+2026-11-14 22:13:31,661 - INFO -   ensemble: Acc=0.9975, F1=0.9975, CV=1.0000±0.0000
+2026-11-14 22:13:31,661 - INFO - 
+======================================================================
+2026-11-14 22:13:31,661 - INFO - Step 3: Classifying Sample Files
+2026-11-14 22:13:31,661 - INFO - ======================================================================
+2026-11-14 22:13:31,749 - INFO - 
+🔴 ClothingInventoryManager:
+2026-11-14 22:13:31,751 - INFO -    Severity:     CRITICAL
+2026-11-14 22:13:31,751 - INFO -    Confidence:   51.5%
+2026-11-14 22:13:31,751 - INFO -    God Class:    YES
+2026-11-14 22:13:31,751 - INFO -    Recommendation: URGENT: Immediate decomposition required. This is a severe God Class.
+2026-11-14 22:13:31,857 - INFO - 
+🟢 EmailValidator:
+2026-11-14 22:13:31,857 - INFO -    Severity:     NONE
+2026-11-14 22:13:31,857 - INFO -    Confidence:   94.0%
+2026-11-14 22:13:31,858 - INFO -    God Class:    NO
+2026-11-14 22:13:31,858 - INFO -    Recommendation: No action required. Class is well-designed.
+2026-11-14 22:13:31,961 - INFO - 
+🔴 EnterpriseResourcePlanner:
+2026-11-14 22:13:31,962 - INFO -    Severity:     CRITICAL
+2026-11-14 22:13:31,962 - INFO -    Confidence:   79.2%
+2026-11-14 22:13:31,962 - INFO -    God Class:    YES
+2026-11-14 22:13:31,962 - INFO -    Recommendation: URGENT: Immediate decomposition required. This is a severe God Class.
+2026-11-14 22:13:32,064 - INFO - 
+🟠 InventoryManagementSystem:
+2026-11-14 22:13:32,064 - INFO -    Severity:     MAJOR
+2026-11-14 22:13:32,064 - INFO -    Confidence:   56.0%
+2026-11-14 22:13:32,064 - INFO -    God Class:    YES
+2026-11-14 22:13:32,064 - INFO -    Recommendation: Schedule refactoring. This class shows signs of becoming a God Class.
+2026-11-14 22:13:32,163 - INFO - 
+🟡 OrderProcessor:
+2026-11-14 22:13:32,163 - INFO -    Severity:     MINOR
+2026-11-14 22:13:32,163 - INFO -    Confidence:   88.6%
+2026-11-14 22:13:32,163 - INFO -    God Class:    NO
+2026-11-14 22:13:32,163 - INFO -    Recommendation: Monitor for growth. Consider refactoring if metrics increase.
+2026-11-14 22:13:32,269 - INFO - 
+🟡 UserService:
+2026-11-14 22:13:32,269 - INFO -    Severity:     MINOR
+2026-11-14 22:13:32,269 - INFO -    Confidence:   53.3%
+2026-11-14 22:13:32,269 - INFO -    God Class:    NO
+2026-11-14 22:13:32,269 - INFO -    Recommendation: Monitor for growth. Consider refactoring if metrics increase.
+2026-11-14 22:13:32,269 - INFO - 
+======================================================================
+2026-11-14 22:13:32,270 - INFO - Step 4: Feature Importance Analysis
+2026-11-14 22:13:32,270 - INFO - ======================================================================
+2026-11-14 22:13:32,372 - INFO -   sloc           : 0.2860 ███████████
+2026-11-14 22:13:32,372 - INFO -   loc            : 0.2129 ████████
+2026-11-14 22:13:32,372 - INFO -   wmc            : 0.1419 █████
+2026-11-14 22:13:32,372 - INFO -   noa            : 0.1415 █████
+2026-11-14 22:13:32,373 - INFO -   nom            : 0.0908 ███
+2026-11-14 22:13:32,373 - INFO -   cbo            : 0.0870 ███
+2026-11-14 22:13:32,373 - INFO -   lcom           : 0.0399 █
+2026-11-14 22:13:32,373 - INFO - 
+======================================================================
+2026-11-14 22:13:32,373 - INFO - Step 5: Saving Results
+2026-11-14 22:13:32,373 - INFO - ======================================================================
+2026-11-14 22:13:32,426 - INFO - Results saved to: results\demo_output
+2026-11-14 22:13:32,426 - INFO - 
+======================================================================
+2026-11-14 22:13:32,426 - INFO - DEMO COMPLETE - SUMMARY
+2026-11-14 22:13:32,427 - INFO - ======================================================================
+2026-11-14 22:13:32,427 - INFO - 
+Files analyzed: 6
+2026-11-14 22:13:32,427 - INFO -   NONE: 1
+2026-11-14 22:13:32,427 - INFO -   MINOR: 2
+2026-11-14 22:13:32,427 - INFO -   MAJOR: 1
+2026-11-14 22:13:32,427 - INFO -   CRITICAL: 2
+2026-11-14 22:13:32,427 - INFO - 
+God Classes detected: 3/6
+2026-11-14 22:13:32,427 - INFO - Best model accuracy: 100.00%

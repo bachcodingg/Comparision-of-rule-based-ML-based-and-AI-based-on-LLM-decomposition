@@ -17,6 +17,7 @@ Metrics extracted:
 """
 
 import re
+import sys
 import logging
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
@@ -26,6 +27,39 @@ from collections import defaultdict
 import pandas as pd
 
 logger = logging.getLogger(__name__)
+
+# Shared syntax-tree extractor (repo root /common). LOC, NOM, NOA, WMC, CBO and
+# LCOM are taken from it so that this pipeline, the ML pipeline and the
+# evaluation scripts all work from the same numbers. The regex code below is
+# still used for the secondary metrics (DIT, RFC, method visibility counts).
+_REPO_ROOT = Path(__file__).resolve().parents[4]
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
+
+from common.java_metrics import extract_metrics as _ast_metrics  # noqa: E402
+
+
+def _shared_metrics(file_path) -> dict:
+    """Primary-class metrics from the syntax tree; {} if the file cannot be parsed."""
+    try:
+        m = _ast_metrics(file_path)
+    except Exception as e:
+        logger.warning(f"AST extraction failed for {file_path} ({type(e).__name__}: {e}); "
+                       f"falling back to regex values")
+        return {}
+    return {
+        'class_name': m.class_name,
+        'loc': m.loc,
+        'sloc': m.sloc,
+        'nom': m.nom,
+        'nof': m.noa,
+        'noa': m.noa,
+        'wmc': m.wmc,
+        'cc': round(m.wmc / m.nom, 2) if m.nom else 0.0,
+        'cbo': m.cbo,
+        'fanout': m.cbo,
+        'lcom': m.lcom,
+    }
 
 
 @dataclass
@@ -109,6 +143,35 @@ class MetricExtractor:
         # Regex patterns
         self._compile_patterns()
     
+    # Comments and string/char literals, matched in one pass so that a "//"
+    # inside a string (or a quote inside a comment) is not misread.
+    _NON_CODE_PATTERN = re.compile(
+        r'/\*.*?\*/'                 # block and Javadoc comments
+        r'|//[^\n]*'                 # line comments
+        r'|"(?:\\.|[^"\\\n])*"'      # string literals
+        r"|'(?:\\.|[^'\\\n])*'",     # char literals
+        re.DOTALL
+    )
+
+    @classmethod
+    def strip_comments_and_strings(cls, content: str) -> str:
+        """
+        Return the source with comments removed and literals emptied.
+
+        Metrics must be computed on code only. Without this step, prose in
+        comments is parsed as code: "class with minimal complexity" yields the
+        class name "with", and every capitalised word in a comment is counted
+        as a coupled type. Line breaks are kept so line numbers stay stable.
+        """
+        def _blank(match):
+            text = match.group(0)
+            if text.startswith('"'):
+                return '""'
+            if text.startswith("'"):
+                return "''"
+            return '\n' * text.count('\n')
+        return cls._NON_CODE_PATTERN.sub(_blank, content)
+
     def _compile_patterns(self):
         """Compile regex patterns for parsing Java code."""
         # Class/interface declaration
@@ -222,6 +285,10 @@ class MetricExtractor:
             logger.error(f"Cannot read {file_path}: {e}")
             return {}
         
+        # LOC is counted on the raw file; every other metric on code only
+        raw_content = content
+        content = self.strip_comments_and_strings(raw_content)
+
         # Extract basic info
         class_match = self.class_pattern.search(content)
         if not class_match:
@@ -236,7 +303,7 @@ class MetricExtractor:
         package = package_match.group(1) if package_match else ""
         
         # Calculate metrics
-        loc = self._calculate_loc(content)
+        loc = self._calculate_loc(raw_content)
         nom, public_methods, private_methods, protected_methods = self._count_methods(content)
         nof, noa = self._count_fields(content)
         cc, wmc = self._calculate_complexity(content)
@@ -245,7 +312,7 @@ class MetricExtractor:
         dit = self._calculate_dit(parent_class)
         rfc = self._calculate_rfc(content, nom)
         
-        return {
+        result = {
             'file_path': str(file_path),
             'class_name': class_name,
             'package': package,
@@ -264,6 +331,8 @@ class MetricExtractor:
             'private_methods': private_methods,
             'protected_methods': protected_methods
         }
+        result.update(_shared_metrics(file_path))
+        return result
 
     def _extract_from_file(self, file_path: Path, repo_name: str) -> Optional[ClassMetrics]:
         """Extract metrics from a single Java file."""
@@ -273,6 +342,10 @@ class MetricExtractor:
             logger.debug(f"Cannot read {file_path}: {e}")
             return None
         
+        # LOC is counted on the raw file; every other metric on code only
+        raw_content = content
+        content = self.strip_comments_and_strings(raw_content)
+
         # Extract basic info
         class_match = self.class_pattern.search(content)
         if not class_match:
@@ -293,7 +366,7 @@ class MetricExtractor:
         )
         
         # Calculate metrics
-        metrics.loc = self._calculate_loc(content)
+        metrics.loc = self._calculate_loc(raw_content)
         metrics.nom, metrics.public_methods, metrics.private_methods, metrics.protected_methods = self._count_methods(content)
         metrics.nof, metrics.noa = self._count_fields(content)
         metrics.cc, metrics.wmc = self._calculate_complexity(content)
@@ -301,6 +374,10 @@ class MetricExtractor:
         metrics.lcom = self._calculate_lcom(content)
         metrics.dit = self._calculate_dit(parent_class)
         metrics.rfc = self._calculate_rfc(content, metrics.nom)
+
+        for key, value in _shared_metrics(file_path).items():
+            if hasattr(metrics, key):
+                setattr(metrics, key, value)
         
         return metrics
     

@@ -26,11 +26,11 @@ Where:
         LCOM: 0.15  (cohesion indicates separation quality)
         NOM:  0.15  (method count reflects behavioral complexity)
 
-Priority Score Range: 0.0 - 4.0
-    0.0-1.0: LOW      - No immediate action needed
-    1.0-2.0: MEDIUM   - Monitor for growth
-    2.0-3.0: HIGH     - Refactor when time permits
-    3.0-4.0: CRITICAL - Urgent refactoring required
+Priority Score Range: 1.0 - 4.0 (label = nearest severity level)
+    1.0-1.5: LOW      - No immediate action needed
+    1.5-2.5: MEDIUM   - Monitor for growth
+    2.5-3.5: HIGH     - Refactor when time permits
+    3.5-4.0: CRITICAL - Urgent refactoring required
 
 RESEARCH FOUNDATION
 ===================
@@ -124,6 +124,37 @@ from enum import Enum
 import pandas as pd
 
 logger = logging.getLogger(__name__)
+
+
+RECOMMENDATIONS = {
+    "LOW": "No immediate action needed",
+    "MEDIUM": "Monitor for growth",
+    "HIGH": "Refactor when time permits",
+    "CRITICAL": "Urgent refactoring required",
+}
+
+
+def priority_label_for(score: float, legacy_bins: bool = False) -> str:
+    """Map a priority score to a label.
+
+    Each metric scores 1 (LOW) to 4 (CRITICAL) and the weights sum to 1, so the
+    score lies in [1.0, 4.0] and equals k when every metric is at level k. The
+    label is the nearest level: a class with every metric LOW scores 1.00 and
+    is LOW, every metric HIGH scores 3.00 and is HIGH.
+
+    legacy_bins=True reproduces the cut-offs used until November 2026
+    (<1 LOW, <2 MEDIUM, <3 HIGH, else CRITICAL). Under those cut-offs LOW was
+    unreachable and a class with every metric at level k was labelled k+1.
+    It is kept only so the earlier results can be reproduced and compared.
+    """
+    cuts = (1.0, 2.0, 3.0) if legacy_bins else (1.5, 2.5, 3.5)
+    if score < cuts[0]:
+        return "LOW"
+    if score < cuts[1]:
+        return "MEDIUM"
+    if score < cuts[2]:
+        return "HIGH"
+    return "CRITICAL"
 
 
 class SeverityLevel(Enum):
@@ -301,7 +332,7 @@ class SeverityBasedScorer:
             
         Returns:
             Tuple of (priority_score, details_dict)
-            - priority_score: Float between 0.0 and 4.0
+            - priority_score: Float between 1.0 and 4.0
             - details_dict: Breakdown of calculation
         """
         # Get metric values (with defaults)
@@ -337,18 +368,8 @@ class SeverityBasedScorer:
             }
         
         # Determine priority label
-        if score < 1.0:
-            priority_label = "LOW"
-            recommendation = "No immediate action needed"
-        elif score < 2.0:
-            priority_label = "MEDIUM"
-            recommendation = "Monitor for growth"
-        elif score < 3.0:
-            priority_label = "HIGH"
-            recommendation = "Refactor when time permits"
-        else:
-            priority_label = "CRITICAL"
-            recommendation = "Urgent refactoring required"
+        priority_label = priority_label_for(score)
+        recommendation = RECOMMENDATIONS[priority_label]
         
         # Count severity levels
         severity_counts = {
@@ -544,8 +565,8 @@ if __name__ == "__main__":
     
     print("\n" + "=" * 70)
     print("Priority Score Interpretation:")
-    print("  0.0-1.0: LOW      - No action needed")
-    print("  1.0-2.0: MEDIUM   - Monitor for growth")
-    print("  2.0-3.0: HIGH     - Refactor when possible")
-    print("  3.0-4.0: CRITICAL - Urgent refactoring")
+    print("  1.0-1.5: LOW      - No action needed")
+    print("  1.5-2.5: MEDIUM   - Monitor for growth")
+    print("  2.5-3.5: HIGH     - Refactor when possible")
+    print("  3.5-4.0: CRITICAL - Urgent refactoring")
     print("=" * 70)
