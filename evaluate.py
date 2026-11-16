@@ -1,20 +1,5 @@
 #!/usr/bin/env python3
-"""Regenerate every number the thesis reports for the rule-based and ML pipelines.
-
-    python evaluate.py            # full run (about five minutes, mostly ML ablations)
-    python evaluate.py --quick    # skip the ablation table
-
-Writes results/evaluation.json and results/evaluation.md. The LLM evaluation
-is separate (llm-evaluation/) because it needs API keys and costs money.
-
-What is measured, on the six classes in dataset/blind against dataset/labels.csv:
-  1. metrics of each class (common/java_metrics.py)
-  2. rule-based severity, with the corrected and the legacy score bins
-  3. ML severity on the same files, hold-out results on synthetic data,
-     feature importance, and an ablation over SMOTE / PCA / class imbalance
-  4. Extract Class output of the rule-based decomposer: does it produce
-     anything, and does the result compile
-  5. wall-clock time per file
+"""
 """
 
 from __future__ import annotations
