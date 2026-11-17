@@ -8,9 +8,7 @@
                         EXECUTIVE SUMMARY
 ================================================================================
 
-This report presents a comprehensive analysis of AI-Agent approaches for 
-detecting and decomposing large Java classes (God Classes). We evaluate
-three state-of-the-art Large Language Model (LLM) based AI agents:
+
 
 1. Claude (Anthropic) - Claude 3.5 Sonnet
 2. GPT-4 (OpenAI) - GPT-4 Turbo  
