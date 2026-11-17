@@ -1,30 +1,5 @@
 #!/usr/bin/env python3
-"""
-Build the evaluation copies of the six Java test classes.
 
-The original files (rule-based-java-decomposition/.../data/sample) carry their
-own answer key: the file name and the header comment state the expected
-severity, the header and footer list hand-estimated metric values and a worked
-priority score, and two of them list a suggested decomposition. Any tool that
-reads the file as text (an LLM in particular) can copy the answer instead of
-analysing the code.
-
-This script writes copies with that information removed:
-
-  * every comment that mentions severity, expected results, metric values,
-    scores, God Class, or refactoring advice is deleted;
-  * section banners ("// ===== ORDER MANAGEMENT (10 methods, complexity 38)")
-    are deleted, because they name the responsibility groups a decomposition
-    is supposed to discover;
-  * ordinary comments (field-group notes, method Javadoc) are kept;
-  * each file is named after its public class, so it compiles;
-  * EnterpriseResourcePlanner gets `import java.util.Date;` because the
-    original imports both java.util.* and java.sql.* and does not compile.
-
-No executable statement is changed. Labels live only in labels.csv.
-
-Usage:  python dataset/make_blind_dataset.py
-"""
 
 import re
 import sys
