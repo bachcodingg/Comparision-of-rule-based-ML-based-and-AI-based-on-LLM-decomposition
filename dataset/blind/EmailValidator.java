@@ -10,7 +10,10 @@ public class EmailValidator {
     public EmailValidator() {
         this.validationCount = 0;
     }
-
+    /**
+     * Validates email format
+     * Complexity: 3 (if statements)
+     */
 
     public boolean isValid(String email) {
         if (email == null || email.trim().isEmpty()) {
